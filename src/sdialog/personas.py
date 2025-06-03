@@ -50,6 +50,7 @@ class Persona(BasePersona):
     personality: str = ""
     circumstances: str = ""
     rules: str = ""
+    language: str = ""
 
 
 class PersonaAgent:
