@@ -15,13 +15,14 @@ from langchain_ollama.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from . import Dialog, Turn
+from .personas import Persona
 
 
 class LLMDialogOutput(BaseModel):
   dialog: List[Turn]
 
 
-# TODO: create a BaseDialogGenerator, and also PersonaDialogGenerator that takes personas objects as in multi-agent.
+# TODO: create a BaseDialogGenerator
 class DialogGenerator:
     def __init__(self, model: Union[ChatOllama, str], dialogue_details: str, output_format: Union[dict, BaseModel] = LLMDialogOutput, scenario: dict = None):
         """Optional `scenario` to populate the "scenario" field of the output, if not provided, `dialogue_details` content will be used."""
@@ -83,3 +84,31 @@ class DialogGenerator:
         ]
 
     __call__ = generate
+
+
+class PersonaDialogGenerator(DialogGenerator):
+    def __init__(self,
+                 model: Union[ChatOllama, str],
+                 persona_a: Persona,
+                 persona_b: Persona,
+                 dialogue_details: str = "",
+                 response_details: str = "responses SHOULD NOT be too long and wordy, should be approximately one utterance long",
+                 scenario: dict = None):
+
+        dialogue_details = f"""Role play as the following two characters having a conversations. The characters are defined by the personas in the following lines. You always stay in character.
+[[ ## BEGING FIRST PERSONA ## ]]
+{persona_a}
+[[ ## END FIRST PERSONA ## ]]
+
+[[ ## BEGING SECOND PERSONA ## ]]
+{persona_b}
+[[ ## END SECOND PERSONA ## ]]
+---
+{"Details about the overall dialogue: " + dialogue_details if dialogue_details else ""}
+{"Details about your responses: " + response_details if response_details else ""}
+Finally, remember:
+   1. You always stay on character. You are the characters described above.
+   2. Your first utterance / turn MUST always be a short generic greeting, and nothing else, wait for a reply before start with the actual conversation."""
+        super().__init__(model=model,
+                         dialogue_details=dialogue_details,
+                         scenario=scenario)
