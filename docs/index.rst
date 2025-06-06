@@ -1,9 +1,6 @@
 Synthetic Dialogue Generation with SDialog
 ==========================================
 
-Motivation
-----------
-
 Conversational AI research and applications increasingly rely on high-quality, flexible, and reproducible synthetic dialogues for training, evaluation, and benchmarking. However, generating such dialogues presents several challenges:
 
 - **Standardization:** There is a lack of standard definitions for dialogue, persona, and event structures, making it difficult to compare results across systems or datasets.
@@ -12,7 +9,7 @@ Conversational AI research and applications increasingly rely on high-quality, f
 - **LLM Integration:** Leveraging instruction-tuned Large Language Models (LLMs) for dialogue generation requires seamless integration, prompt management, and memory handling.
 - **Scenario and Dataset Management:** Managing complex scenarios, flowcharts, and persona definitions is essential for reproducible research and controlled experimentation.
 
-**SDialog** addresses these needs by providing a comprehensive, extensible framework for synthetic dialogue generation and analysis, supporting:
+`**SDialog** <https://github.com/idiap/sdialog>`__ addresses these needs by providing a comprehensive, extensible framework for synthetic dialogue generation and analysis, supporting:
 
 - **Persona-based role-playing** with LLMs for realistic, diverse conversations.
 - **Multi-agent and orchestrated dialogues** for complex, scenario-driven simulations.
@@ -23,8 +20,8 @@ Conversational AI research and applications increasingly rely on high-quality, f
 Whether you are building conversational datasets, evaluating dialogue models, or experimenting with new conversational AI techniques, SDialog offers the abstractions and tools you need.
 
 
-Further Readings
-================
+User Guide
+==========
 
 .. toctree::
    :maxdepth: 3
@@ -51,9 +48,3 @@ Further Readings
    about/changelog
    about/contributing
    about/license
-
-----
-
-**License:** MIT  
-**Contact:** Idiap Research Institute  
-**GitHub:** https://github.com/idiap/sdialog
