@@ -32,10 +32,10 @@ version = {attr = "sdialog.__version__"}
 dependencies = {file = ["requirements.txt"]}
 
 [project.urls]
-Homepage = "https://github.com/idiap/sdialog"
+Homepage = "https://sdialog.readthedocs.io"
 Issues = "https://github.com/idiap/sdialog/issues"
 Source = "https://github.com/idiap/sdialog"
-Documentation = "https://github.com/idiap/sdialog/blob/main/README.md"
+Documentation = "https://sdialog.readthedocs.io"
 
 [flake8]
 max-line-length=120

@@ -1,6 +1,15 @@
 # SDialog
 
-**SDialog** is a Python toolkit for synthetic dialogue generation and analysis, designed for research and development with instruction-tuned Large Language Models (LLMs). It enables flexible, role-playing-based dialogue simulation, orchestration, and scenario management, making it ideal for building, evaluating, and experimenting with conversational agents.
+**SDialog** is a modular, extensible Python toolkit for synthetic dialogue generation and analysis, designed for research and development with instruction-tuned Large Language Models (LLMs). It enables flexible, persona-driven, multi-agent dialogue simulation, orchestration, and scenario management, making it ideal for building, evaluating, and experimenting with conversational agents.
+
+## Motivation
+
+Modern conversational AI research and applications increasingly require high-quality, flexible, and reproducible synthetic dialogues for training, evaluation, and benchmarking. SDialog addresses the need for:
+- **Standardization:** Clear definitions for dialogue, persona, and event structures.
+- **Abstraction:** Abstract interfaces for both single-agent and multi-agent dialogue generation.
+- **Fine-grained Control:** Orchestration to inject instructions, simulate user behaviors, and enforce scenario constraints.
+- **LLM Integration:** Seamless integration with instruction-tuned LLMs, prompt management, and memory handling.
+- **Scenario and Dataset Management:** Tools for managing complex scenarios, flowcharts, and persona definitions.
 
 ## Features
 
@@ -21,6 +30,8 @@ pip install sdialog
 
 ## Quick Start
 
+Define personas, create agents, and generate a dialogue:
+
 ```python
 from sdialog import Persona, PersonaAgent
 
@@ -37,19 +48,36 @@ dialog = alice_agent.dialog_with(bob_agent, max_iterations=10)
 dialog.print()
 ```
 
-## Tutorials
+## Orchestration Example
 
-Explore our Jupyter Notebooks for hands-on examples:
+Add orchestration to control dialogue length or simulate agent behaviors:
 
-1. [Single-LLM Full Dialogue Generation](https://github.com/idiap/sdialog/blob/main/tutorials/1.single_llm_full_generation.ipynb)
-2. [Role-Playing Multi-Agent Dialogue Generation](https://github.com/idiap/sdialog/blob/main/tutorials/2.multi-agent_generation.ipynb)
-3. [Multi-Agent Dialogue Generation with Orchestration](https://github.com/idiap/sdialog/blob/main/tutorials/3.multi-agent+orchestrator_generation.ipynb)
+```python
+from sdialog.orchestrators import LengthOrchestrator, ChangeMindOrchestrator
+
+length_orch = LengthOrchestrator(min=3, max=6)
+mind_orch = ChangeMindOrchestrator(probability=0.5, reasons=["changed plans", "new information"], max_times=1)
+alice_agent = alice_agent | length_orch | mind_orch
+```
+
+## STAR Dataset Integration
+
+Work with the STAR dataset for scenario-driven dialogue generation:
+
+```python
+from sdialog.datasets import STAR
+
+STAR.set_path("/path/to/star-dataset")
+dialog = STAR.get_dialog(123)
+dialog.print(scenario=True)
+```
 
 ## Documentation
 
-- **API Reference:** See docstrings in the codebase for detailed documentation of all classes and functions.
-- **Scenarios & Orchestration:** Easily define complex scenarios and control agent behavior using orchestrators.
-- **Exporting Dialogues:** Save dialogues as JSON or text for further analysis or training.
+- **[Documentation](https://sdialog.readthedocs.io)** - Full package documentation, including installation, API reference, usage guides, and advanced examples available.
+- **[API Reference](https://sdialog.readthedocs.io/api):** See docstrings in the codebase for detailed documentation of all classes and functions.
+- **[Tutorials](https://github.com/idiap/sdialog/tree/main/tutorials):** Tutorials for hands-on examples as Jupyter Notebooks.
+
 
 ## License
 
