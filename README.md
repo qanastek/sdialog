@@ -5,9 +5,9 @@ Synthetic Dialogue Generation and Analysis.
 ## Tutorials
 
 Make sure you have [`Ollama`](https://ollama.com/download) running is your system before going through our Jupyter Notebooks:
-1. [Single-LLM Full Dialogue Generation.](https://github.com/idiap/sdialog/tutorials/1.single_llm_full_generation.ipynb)
-2. [Role-Playing Multi-Agent Dialogue Generation.](https://github.com/idiap/sdialog/tutorials/2.multi-agent_generation.ipynb)
-3. [Multi-Agent Dialogue Generation with Orchestration.](https://github.com/idiap/sdialog/tutorials/3.multi-agent+orchestrator_generation.ipynb)
+1. [Single-LLM Full Dialogue Generation.](https://github.com/idiap/sdialog/blob/main/tutorials/1.single_llm_full_generation.ipynb)
+2. [Role-Playing Multi-Agent Dialogue Generation.](https://github.com/idiap/sdialog/blob/main/tutorials/2.multi-agent_generation.ipynb)
+3. [Multi-Agent Dialogue Generation with Orchestration.](https://github.com/idiap/sdialog/blob/main/tutorials/3.multi-agent+orchestrator_generation.ipynb)
 
 ## TODO
 
