@@ -1,4 +1,10 @@
 # SDialog
+[![Documentation Status](https://app.readthedocs.org/projects/sdialog/badge/?version=latest)](https://sdialog.readthedocs.io)
+[![PyPI version](https://badge.fury.io/py/sdialog.svg)](https://badge.fury.io/py/sdialog)
+[![Downloads](https://static.pepy.tech/badge/sdialog)](https://pepy.tech/project/sdialog)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/idiap/sdialog/master?filepath=tutorials)
+<!-- [![Build Status](https://api.travis-ci.com/sergioburdisso/sdialog.svg?branch=master)](https://app.travis-ci.com/github/idiap/sdialog) -->
+<!-- [![codecov](https://codecov.io/gh/idiap/sdialog/branch/master/graph/badge.svg)](https://codecov.io/gh/idiap/sdialog) -->
 
 **SDialog** is a modular, extensible Python toolkit for synthetic dialogue generation and analysis, designed for research and development with instruction-tuned Large Language Models (LLMs). It enables flexible, persona-driven, multi-agent dialogue simulation, orchestration, and scenario management, making it ideal for building, evaluating, and experimenting with conversational agents.
 
@@ -27,6 +33,9 @@ pip install sdialog
 ```
 
 > **Note:** You must have [Ollama](https://ollama.com/download) running on your system to use the default LLM integration.
+> ```bash
+> curl -fsSL https://ollama.com/install.sh | sh
+> ```
 
 ## Quick Start
 
@@ -75,7 +84,7 @@ dialog.print(scenario=True)
 ## Documentation
 
 - **[Documentation](https://sdialog.readthedocs.io)** - Full package documentation, including installation, API reference, usage guides, and advanced examples available.
-- **[API Reference](https://sdialog.readthedocs.io/api):** See docstrings in the codebase for detailed documentation of all classes and functions.
+- **[API Reference](https://https://sdialog.readthedocs.io/en/latest/api/index.html):** See docstrings in the codebase for detailed documentation of all classes and functions.
 - **[Tutorials](https://github.com/idiap/sdialog/tree/main/tutorials):** Tutorials for hands-on examples as Jupyter Notebooks.
 
 
