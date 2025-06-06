@@ -9,7 +9,7 @@ Conversational AI research and applications increasingly rely on high-quality, f
 - **LLM Integration:** Leveraging instruction-tuned Large Language Models (LLMs) for dialogue generation requires seamless integration, prompt management, and memory handling.
 - **Scenario and Dataset Management:** Managing complex scenarios, flowcharts, and persona definitions is essential for reproducible research and controlled experimentation.
 
-`**SDialog** <https://github.com/idiap/sdialog>`__ addresses these needs by providing a comprehensive, extensible framework for synthetic dialogue generation and analysis, supporting:
+** `SDialog <https://github.com/idiap/sdialog>`__ ** addresses these needs by providing a comprehensive, extensible framework for synthetic dialogue generation and analysis, supporting:
 
 - **Persona-based role-playing** with LLMs for realistic, diverse conversations.
 - **Multi-agent and orchestrated dialogues** for complex, scenario-driven simulations.
