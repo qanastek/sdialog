@@ -1,3 +1,9 @@
+"""
+generators: Dialogue Generation Utilities for sdialog
+
+This module provides classes for generating synthetic dialogues using LLMs, including support for persona-based
+role-play and scenario-driven dialogue generation. Output can be structured using Pydantic models for downstream tasks.
+"""
 # SPDX-FileCopyrightText: Copyright © 2025 Idiap Research Institute <contact@idiap.ch>
 # SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>
 # SPDX-License-Identifier: MIT
@@ -19,13 +25,37 @@ from .personas import Persona
 
 
 class LLMDialogOutput(BaseModel):
-  dialog: List[Turn]
+    """
+    Pydantic model for LLM-generated dialogue output.
+
+    Attributes:
+        dialog (List[Turn]): List of dialogue turns.
+    """
+    dialog: List[Turn]
 
 
 # TODO: create a BaseDialogGenerator
 class DialogGenerator:
+    """
+    Base class for generating synthetic dialogues using an LLM.
+
+    Attributes:
+        model_name: The model or model name used for generation.
+        output_format: The output format (Pydantic model or dict).
+        scenario: Scenario metadata for the dialogue.
+        dialogue_details: Instructions or details for the dialogue.
+        messages: List of system and human messages for the LLM.
+    """
     def __init__(self, model: Union[ChatOllama, str], dialogue_details: str, output_format: Union[dict, BaseModel] = LLMDialogOutput, scenario: dict = None):
-        """Optional `scenario` to populate the "scenario" field of the output, if not provided, `dialogue_details` content will be used."""
+        """
+        Initializes a DialogGenerator.
+
+        Args:
+            model (Union[ChatOllama, str]): The LLM or model name to use.
+            dialogue_details (str): Instructions or details for the dialogue.
+            output_format (Union[dict, BaseModel]): Output format schema or Pydantic model.
+            scenario (dict): Scenario metadata for the dialogue (if not provided, value set to `dialogue_details`).
+        """
 
         if not output_format or type(output_format) == dict:
             output_format_schema = output_format
@@ -48,6 +78,16 @@ class DialogGenerator:
         self.set(dialogue_details, scenario)
 
     def generate(self, seed: int = None, id: int = None):
+        """
+        Generates a synthetic dialogue using the LLM.
+
+        Args:
+            seed (int): Random seed for reproducibility.
+            id (int): Dialogue ID.
+
+        Returns:
+            Union[Dialog, dict, BaseModel]: The generated dialogue or output object.
+        """
         self.llm.seed = seed if seed is not None else random.getrandbits(32)
 
         # hack to avoid seed bug in prompt cache (to force a new cache, related to https://github.com/ollama/ollama/issues/5321)
@@ -73,6 +113,13 @@ class DialogGenerator:
                 return llm_output
 
     def set(self, dialogue_details: str, scenario:dict=None):
+        """
+        Sets the dialogue details and scenario for generation.
+
+        Args:
+            dialogue_details (str): Instructions or details for the dialogue.
+            scenario (dict): Scenario metadata.
+        """
         self.scenario = scenario
         self.dialogue_details = dialogue_details
         self.messages = [
@@ -87,6 +134,13 @@ class DialogGenerator:
 
 
 class PersonaDialogGenerator(DialogGenerator):
+    """
+    Generates dialogues between two personas using an LLM.
+
+    Attributes:
+        persona_a (Persona): The first persona.
+        persona_b (Persona): The second persona.
+    """
     def __init__(self,
                  model: Union[ChatOllama, str],
                  persona_a: Persona,
@@ -94,6 +148,17 @@ class PersonaDialogGenerator(DialogGenerator):
                  dialogue_details: str = "",
                  response_details: str = "responses SHOULD NOT be too long and wordy, should be approximately one utterance long",
                  scenario: dict = None):
+        """
+        Initializes a PersonaDialogGenerator.
+
+        Args:
+            model (Union[ChatOllama, str]): The LLM or model name to use.
+            persona_a (Persona): The first persona.
+            persona_b (Persona): The second persona.
+            dialogue_details (str): Additional dialogue instructions.
+            response_details (str): Instructions for response style.
+            scenario (dict): Scenario metadata.
+        """
 
         dialogue_details = f"""Role play as the following two characters having a conversations. The characters are defined by the personas in the following lines. You always stay in character.
 [[ ## BEGING FIRST PERSONA ## ]]

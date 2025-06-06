@@ -1,3 +1,9 @@
+"""
+personas: Persona and Agent Definitions for Synthetic Dialogue Generation
+
+This module provides classes for defining personas (character profiles) and simulating agents that role-play these personas
+in synthetic dialogue generation. Agents interact using LLMs and can be orchestrated for complex behaviors.
+"""
 # SPDX-FileCopyrightText: Copyright © 2025 Idiap Research Institute <contact@idiap.ch>
 # SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>
 # SPDX-License-Identifier: MIT
@@ -18,6 +24,9 @@ from .util import make_serializable
 
 
 class Meta(type):
+    """
+    Metaclass for enabling automatic __init__ chaining in subclasses.
+    """
     def __init__(cls, name, bases, dct):
         def auto__call__init__(self, *a, **kw):
             for base in cls.__bases__:
@@ -28,22 +37,62 @@ class Meta(type):
 
 
 class BasePersona(metaclass=Meta):
+    """
+    Base class for defining a persona (character profile) for role-play.
+
+    Attributes:
+        Arbitrary keyword arguments are stored as persona attributes.
+    """
     def __init__(self, **kwargs):
+        """
+        Initializes the persona with arbitrary attributes.
+        """
         self.__dict__.update(kwargs)
 
     def description(self) -> str:
+        """
+        Returns a string description of the persona's attributes.
+
+        Returns:
+            str: Description of the persona.
+        """
         return "\n".join(f"Your {key}: {value}" for key, value in self.__dict__.items())
 
     def __str__(self) -> str:
+        """
+        Returns the string representation of the persona.
+        """
         return self.description()
 
     def json(self, string: bool = False, indent=None):
+        """
+        Serializes the persona to JSON.
+
+        Args:
+            string (bool): If True, returns a JSON string; otherwise, returns a dict.
+            indent (int): Indentation level for pretty-printing.
+
+        Returns:
+            Union[str, dict]: The serialized persona.
+        """
         data = self.__dict__.copy()
         make_serializable(data)
         return json.dumps(data, indent=indent) if string else data
 
 
 class Persona(BasePersona):
+    """
+    Standard persona class with common attributes for role-play.
+
+    Attributes:
+        name (str): Name of the persona.
+        role (str): Role or occupation.
+        background (str): Background information.
+        personality (str): Personality traits.
+        circumstances (str): Current circumstances.
+        rules (str): Rules or constraints.
+        language (str): Preferred language.
+    """
     name: str = ""
     role: str = ""
     background: str = ""
@@ -54,6 +103,13 @@ class Persona(BasePersona):
 
 
 class PersonaAgent:
+    """
+    Agent that simulates a persona in dialogue using an LLM.
+
+    Attributes:
+        STOP_WORD (str): Special token to indicate end of conversation.
+        STOP_WORD_TEXT (str): Replacement text for STOP_WORD.
+    """
 
     STOP_WORD = "STOP"
     STOP_WORD_TEXT = "(bye bye!)"
@@ -68,6 +124,20 @@ class PersonaAgent:
                  can_finish: bool = False,
                  orchestrators: Union[BaseOrchestrator, List[BaseOrchestrator]] = None,
                  scenario: Union[dict, str] = None):
+        """
+        Initializes a PersonaAgent for role-play dialogue.
+
+        Args:
+            model (Union[str, ChatOllama]): The LLM or model name to use.
+            persona (BasePersona): The persona to role-play.
+            name (str): Name of the agent.
+            dialogue_details (str): Additional details about the dialogue.
+            response_details (str): Instructions for response style.
+            system_prompt (str): Custom system prompt (optional).
+            can_finish (bool): If True, agent can end the conversation.
+            orchestrators (Union[BaseOrchestrator, List[BaseOrchestrator]]): Orchestrators for agent behavior.
+            scenario (Union[dict, str]): Scenario metadata.
+        """
 
         if not system_prompt:
             if can_finish:
@@ -107,6 +177,16 @@ Finally, remember:
         self.add_orchestrators(orchestrators)
 
     def __call__(self, utterance: str = "", return_events: bool = False) -> str:
+        """
+        Processes an input utterance and generates a response.
+
+        Args:
+            utterance (str): The input utterance from the other agent or user.
+            return_events (bool): If True, returns a list of events instead of just the response string.
+
+        Returns:
+            Union[str, List[Event], None]: The agent's response or events, or None if finished.
+        """
         if self.finished:
             return None
 
@@ -162,15 +242,39 @@ Finally, remember:
             return response if response else ""
 
     def __or__(self, orchestrator: Union[BaseOrchestrator, List[BaseOrchestrator]]):
+        """
+        Adds orchestrators to the agent using the | operator.
+
+        Args:
+            orchestrator (Union[BaseOrchestrator, List[BaseOrchestrator]]): Orchestrator(s) to add.
+
+        Returns:
+            PersonaAgent: The agent with orchestrators added.
+        """
         self.add_orchestrators(orchestrator)
         return self
 
     def response_lookahead(self, utterance: str = None):
+        """
+        Generates a response to a hypothetical next utterance without updating memory.
+
+        Args:
+            utterance (str): The hypothetical next utterance.
+
+        Returns:
+            str: The predicted response.
+        """
         if not utterance:
             return self.llm.invoke(self.memory).content
         return self.llm.invoke(self.memory + [HumanMessage(utterance)]).content
 
     def add_orchestrators(self, orchestrators):
+        """
+        Adds orchestrators to the agent.
+
+        Args:
+            orchestrators (Union[BaseOrchestrator, List[BaseOrchestrator]]): Orchestrator(s) to add.
+        """
         if not orchestrators:
             return
 
@@ -186,21 +290,59 @@ Finally, remember:
             orchestrator._set_target_agent(self)
 
     def clear_orchestrators(self):
+        """
+        Removes all orchestrators from the agent.
+        """
         self.orchestrators = None
 
     def instruct(self, instruction: str, persist: bool = False):
+        """
+        Adds a system instruction to the agent's memory.
+
+        Args:
+            instruction (str): The instruction text.
+            persist (bool): If True, instruction persists across turns.
+        """
         self.memory.append(SystemMessage(instruction, response_metadata={"persist": persist}))
 
     def set_first_utterances(self, utterances: Union[str, List[str]]):
+        """
+        Sets the agent's first utterance(s) for dialogue initialization.
+
+        Args:
+            utterances (Union[str, List[str]]): The greeting(s) to use.
+        """
         self.first_utterances = utterances
 
     def get_name(self):
+        """
+        Returns the agent's name.
+
+        Returns:
+            str: The agent's name.
+        """
         return self.name
 
     def get_prompt(self):
+        """
+        Returns the current system prompt.
+
+        Returns:
+            str: The system prompt.
+        """
         return self.memory[0].content
 
     def json(self, string: bool = False, indent=None):
+        """
+        Serializes the agent's configuration and persona to JSON.
+
+        Args:
+            string (bool): If True, returns a JSON string; otherwise, returns a dict.
+            indent (int): Indentation level for pretty-printing.
+
+        Returns:
+            Union[str, dict]: The serialized agent.
+        """
         data = {}
         if self.name:
             data["name"] = self.name
@@ -213,6 +355,12 @@ Finally, remember:
         return json.dumps(data, indent=indent) if string else data
 
     def reset(self, seed:int = None):
+        """
+        Resets the agent's memory and orchestrators, optionally reseeding the LLM.
+
+        Args:
+            seed (int): Random seed for reproducibility.
+        """
         self.memory[:] = self.memory[:1]
         self.finished = False
         self.llm.seed = seed
@@ -233,6 +381,19 @@ Finally, remember:
                     id: int = None,
                     seed: int = None,
                     keep_bar: bool = True):
+        """
+        Simulates a dialogue between this agent and another PersonaAgent.
+
+        Args:
+            persona (PersonaAgent): The other agent to converse with.
+            max_iterations (int): Maximum number of dialogue turns.
+            id (int): Dialogue ID.
+            seed (int): Random seed for reproducibility.
+            keep_bar (bool): If True, keeps the progress bar visible.
+
+        Returns:
+            Dialog: The generated dialogue object.
+        """
         seed = seed if seed is not None else random.getrandbits(32)
 
         random.seed(seed)

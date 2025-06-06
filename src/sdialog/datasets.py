@@ -1,3 +1,9 @@
+"""
+datasets: Dataset Utilities for Synthetic Dialogue Generation
+
+This module provides utilities for loading, parsing, and describing dialogue datasets, including the STAR dataset.
+It supports extracting scenarios, flowcharts, personas, and constructing PersonaAgent objects for simulation.
+"""
 # SPDX-FileCopyrightText: Copyright © 2025 Idiap Research Institute <contact@idiap.ch>
 # SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>
 # SPDX-License-Identifier: MIT
@@ -12,15 +18,37 @@ from .personas import Persona, PersonaAgent
 from .orchestrators import InstructionListOrchestrator, SimpleResponseOrchestrator
 
 class STAR:
+    """
+    Utility class for interacting with the STAR dialogue dataset.
+
+    Provides methods for loading dialogues, extracting scenarios, flowcharts, responses, and constructing
+    PersonaAgent objects for simulation and evaluation.
+    """
     _path = None
     _speakers = ["User", "Wizard"]
 
     @staticmethod
     def set_path(path):
+        """
+        Sets the root path for the STAR dataset.
+
+        Args:
+            path (str): Path to the STAR dataset root.
+        """
         STAR._path = path
 
     @staticmethod
     def read_graph(task_name, as_dot: bool = True):
+        """
+        Reads the action graph for a given task.
+
+        Args:
+            task_name (str): Name of the task.
+            as_dot (bool): If True, returns DOT format; else, returns dict.
+
+        Returns:
+            Union[str, dict]: The graph in DOT or dict format.
+        """
         with open(os.path.join(STAR._path, f"tasks/{task_name}/{task_name}.json")) as reader:
             if not as_dot:
                 return json.load(reader)["graph"]
@@ -30,6 +58,16 @@ class STAR:
 
     @staticmethod
     def read_graph_responses(task_name, as_dict: bool = False):
+        """
+        Reads example responses for each node in a task's graph.
+
+        Args:
+            task_name (str): Name of the task.
+            as_dict (bool): If True, returns as dict; else, as JSON string.
+
+        Returns:
+            Union[str, dict]: Example responses.
+        """
         with open(os.path.join(STAR._path, f"tasks/{task_name}/responses.json")) as reader:
             responses = json.load(reader)
             responses = {key:re.sub(r"{(.+?)(?::\w+?)?}", lambda m:m.group(1).upper(), value)
@@ -39,6 +77,15 @@ class STAR:
 
     @staticmethod
     def get_dialog(id):
+        """
+        Loads a dialogue by ID.
+
+        Args:
+            id (int): Dialogue ID.
+
+        Returns:
+            Dialog: The loaded dialogue object.
+        """
         with open(os.path.join(STAR._path, f"dialogues/{id}.json")) as reader:
             dialog = json.load(reader)
 
@@ -63,6 +110,18 @@ class STAR:
 
     @staticmethod
     def get_dialogs(domain: str = None, task_name: str = None, happy: bool = None, multitask: bool = None):
+        """
+        Loads all dialogues matching the specified criteria.
+
+        Args:
+            domain (str): Filter by domain.
+            task_name (str): Filter by task name.
+            happy (bool): Filter by 'happy path' status.
+            multitask (bool): Filter by multitask status.
+
+        Returns:
+            List[Dialog]: List of matching dialogues.
+        """
         dialogs = []
         for fname in tqdm(os.listdir(os.path.join(STAR._path, f"dialogues/")), desc="Reading dialogs", leave=False):
             if not fname.endswith(".json"):
@@ -79,11 +138,30 @@ class STAR:
 
     @staticmethod
     def get_dialog_scenario(id):
+        """
+        Loads the scenario for a given dialogue.
+
+        Args:
+            id (int): Dialogue ID.
+
+        Returns:
+            dict: Scenario metadata.
+        """
         with open(os.path.join(STAR._path, f"dialogues/{id}.json")) as reader:
             return json.load(reader)["Scenario"]
 
     @staticmethod
     def get_dialog_first_turn(id, speaker: str = None):
+        """
+        Gets the first turn for a given dialogue and speaker.
+
+        Args:
+            id (int): Dialogue ID.
+            speaker (str): Speaker name (optional).
+
+        Returns:
+            Turn: The first turn.
+        """
         with open(os.path.join(STAR._path, f"dialogues/{id}.json")) as reader:
             for event in json.load(reader)["Events"]:
                 turn_speaker = event["Agent"]
@@ -94,31 +172,71 @@ class STAR:
 
     @staticmethod
     def get_dialog_task_names(id):
+        """
+        Gets the task names for a given dialogue.
+
+        Args:
+            id (int): Dialogue ID.
+
+        Returns:
+            List[str]: List of task names.
+        """
         scenario = STAR.get_dialog_scenario(id)
         return [task["Task"] for task in scenario["WizardCapabilities"]]
 
     @staticmethod
     def get_dialog_responses(id):
+        """
+        Gets example responses for all tasks in a dialogue.
+
+        Args:
+            id (int): Dialogue ID.
+
+        Returns:
+            List[dict]: List of response dicts.
+        """
         tasks = STAR.get_dialog_task_names(id)
         return [STAR.read_graph_responses(task, as_dict=True) for task in tasks]
 
     @staticmethod
     def get_dialog_graphs(id):
+        """
+        Gets action graphs for all tasks in a dialogue.
+
+        Args:
+            id (int): Dialogue ID.
+
+        Returns:
+            List[dict]: List of graphs.
+        """
         tasks = STAR.get_dialog_task_names(id)
         return [STAR.read_graph(task, as_dot=False) for task in tasks]
 
     @staticmethod
     def get_dialog_events(id):
+        """
+        Gets all events for a given dialogue.
+
+        Args:
+            id (int): Dialogue ID.
+
+        Returns:
+            List[dict]: List of events.
+        """
         with open(os.path.join(STAR._path, f"dialogues/{id}.json")) as reader:
             return json.load(reader)["Events"]
 
     @staticmethod
-    def get_dialog_events(id):
-            with open(os.path.join(STAR._path, f"dialogues/{id}.json")) as reader:
-                return json.load(reader)["Events"]
-
-    @staticmethod
     def get_dialog_user_instructions(id):
+        """
+        Gets user instructions for a dialogue, mapped by turn index.
+
+        Args:
+            id (int): Dialogue ID.
+
+        Returns:
+            dict: Mapping from turn index to instruction text.
+        """
         def get_user_n_turns_before(turn_ix, events):
             return len([e for e in events[:turn_ix]
                         if e["Agent"] == "User" and e["Action"] == "utter"])
@@ -129,10 +247,28 @@ class STAR:
 
     @staticmethod
     def get_dialog_graphs_and_responses(id):
+        """
+        Gets both graphs and responses for all tasks in a dialogue.
+
+        Args:
+            id (int): Dialogue ID.
+
+        Returns:
+            Tuple[List[dict], List[dict]]: Graphs and responses.
+        """
         return STAR.get_dialog_graphs(id), STAR.get_dialog_responses(id)
 
     @staticmethod
     def get_scenario_description(scenario):
+        """
+        Generates a natural language description of a scenario, including flowcharts.
+
+        Args:
+            scenario (dict): Scenario metadata.
+
+        Returns:
+            str: Natural language scenario description.
+        """
         # Let's generate the graph description for each task:
         flowcharts = ""
         for task in scenario["WizardCapabilities"]:
@@ -171,11 +307,29 @@ Finally, the following should be considered regarding the conversation:
 
     @staticmethod
     def get_dialog_scenario_description(id):
+        """
+        Gets the scenario and its description for a dialogue.
+
+        Args:
+            id (int): Dialogue ID.
+
+        Returns:
+            Tuple[dict, str]: Scenario and description.
+        """
         scenario = STAR.get_dialog_scenario(id)
         return scenario, STAR.get_scenario_description(scenario)
 
     @staticmethod
     def get_user_persona_for_scenario(scenario):
+        """
+        Constructs a Persona object for the user in a scenario.
+
+        Args:
+            scenario (dict): Scenario metadata.
+
+        Returns:
+            Persona: The user persona.
+        """
         dialogue_details = f"""
 The following should be considered regarding the conversation:
    1. {"The conversation follows a 'happy path', meaning the conversations goes smoothly without any unexpected behavior"
@@ -193,6 +347,15 @@ The following should be considered regarding the conversation:
 
     @staticmethod
     def get_flowchart_description_for_scenario(scenario):
+        """
+        Generates a flowchart description for a scenario.
+
+        Args:
+            scenario (dict): Scenario metadata.
+
+        Returns:
+            str: Flowchart description.
+        """
         flowcharts = ""
         for task in scenario["WizardCapabilities"]:
             task_name = task["Task"]
@@ -213,8 +376,15 @@ where UPPERCASE words above are just example placeholders. You MUST fill in thos
 
     @staticmethod
     def get_system_persona_for_scenario(scenario):
+        """
+        Constructs a Persona object for the system/assistant in a scenario.
 
+        Args:
+            scenario (dict): Scenario metadata.
 
+        Returns:
+            Persona: The system persona.
+        """
         dialogue_details = f"""In the conversation, the AI assistant is instructed to follow specific action flowcharts to address the tasks. Flowcharts are defined as graph described using DOT.
 The actual DOT for the current tasks are:
 {STAR.get_flowchart_description_for_scenario(scenario)}
@@ -226,6 +396,16 @@ The actual DOT for the current tasks are:
 
     @staticmethod
     def get_agents_for_scenario(scenario, model_name):
+        """
+        Constructs PersonaAgent objects for the user and system for a scenario.
+
+        Args:
+            scenario (dict): Scenario metadata.
+            model_name (str): Model name or LLM to use.
+
+        Returns:
+            Tuple[PersonaAgent, PersonaAgent]: (system, user) agents.
+        """
         user = PersonaAgent(model_name,
                             STAR.get_user_persona_for_scenario(scenario),
                             name="User",
@@ -239,6 +419,17 @@ The actual DOT for the current tasks are:
 
     @staticmethod
     def get_agents_from_dialogue(id, model_name:str, set_first_utterance: bool = False):
+        """
+        Constructs PersonaAgent objects for a dialogue, optionally setting the first utterance.
+
+        Args:
+            id (int): Dialogue ID.
+            model_name (str): Model name or LLM to use.
+            set_first_utterance (bool): If True, sets the first utterance.
+
+        Returns:
+            Tuple[PersonaAgent, PersonaAgent]: (system, user) agents.
+        """
         scenario = STAR.get_dialog_scenario(id)
         system, user = STAR.get_agents_for_scenario(scenario, model_name)
 
@@ -253,6 +444,17 @@ The actual DOT for the current tasks are:
 
     @staticmethod
     def get_agents_from_dialogue_with_orchestration(id, model_name:str, set_first_utterance: bool = False):
+        """
+        Constructs PersonaAgent objects with orchestration for a dialogue.
+
+        Args:
+            id (int): Dialogue ID.
+            model_name (str): Model name or LLM to use.
+            set_first_utterance (bool): If True, sets the first utterance.
+
+        Returns:
+            Tuple[PersonaAgent, PersonaAgent]: (system, user) agents with orchestrators.
+        """
         system, user = STAR.get_agents_from_dialogue(id, model_name, set_first_utterance)
 
         graphs, responses = STAR.get_dialog_graphs_and_responses(id)
