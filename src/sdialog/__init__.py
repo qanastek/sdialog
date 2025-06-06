@@ -11,6 +11,9 @@ from print_color import print
 from .util import make_serializable
 
 
+__version__ = "0.0.2"
+
+
 class Turn(BaseModel):
     speaker: Optional[str]
     text: str
