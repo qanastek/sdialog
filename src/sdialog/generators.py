@@ -28,8 +28,8 @@ class LLMDialogOutput(BaseModel):
     """
     Pydantic model for LLM-generated dialogue output.
 
-    Attributes:
-        dialog (List[Turn]): List of dialogue turns.
+    :ivar dialog: List of dialogue turns.
+    :vartype dialog: List[Turn]
     """
     dialog: List[Turn]
 
@@ -39,22 +39,29 @@ class DialogGenerator:
     """
     Base class for generating synthetic dialogues using an LLM.
 
-    Attributes:
-        model_name: The model or model name used for generation.
-        output_format: The output format (Pydantic model or dict).
-        scenario: Scenario metadata for the dialogue.
-        dialogue_details: Instructions or details for the dialogue.
-        messages: List of system and human messages for the LLM.
+    :ivar model_name: The model or model name used for generation.
+    :vartype model_name: str
+    :ivar output_format: The output format (Pydantic model or dict).
+    :vartype output_format: Union[dict, BaseModel]
+    :ivar scenario: Scenario metadata for the dialogue.
+    :vartype scenario: dict
+    :ivar dialogue_details: Instructions or details for the dialogue.
+    :vartype dialogue_details: str
+    :ivar messages: List of system and human messages for the LLM.
+    :vartype messages: list
     """
     def __init__(self, model: Union[ChatOllama, str], dialogue_details: str, output_format: Union[dict, BaseModel] = LLMDialogOutput, scenario: dict = None):
         """
         Initializes a DialogGenerator.
 
-        Args:
-            model (Union[ChatOllama, str]): The LLM or model name to use.
-            dialogue_details (str): Instructions or details for the dialogue.
-            output_format (Union[dict, BaseModel]): Output format schema or Pydantic model.
-            scenario (dict): Scenario metadata for the dialogue (if not provided, value set to `dialogue_details`).
+        :param model: The LLM or model name to use.
+        :type model: Union[ChatOllama, str]
+        :param dialogue_details: Instructions or details for the dialogue.
+        :type dialogue_details: str
+        :param output_format: Output format schema or Pydantic model.
+        :type output_format: Union[dict, BaseModel]
+        :param scenario: Scenario metadata for the dialogue (if not provided, value set to `dialogue_details`).
+        :type scenario: dict
         """
 
         if not output_format or type(output_format) == dict:
@@ -81,12 +88,12 @@ class DialogGenerator:
         """
         Generates a synthetic dialogue using the LLM.
 
-        Args:
-            seed (int): Random seed for reproducibility.
-            id (int): Dialogue ID.
-
-        Returns:
-            Union[Dialog, dict, BaseModel]: The generated dialogue or output object.
+        :param seed: Random seed for reproducibility.
+        :type seed: int
+        :param id: Dialogue ID.
+        :type id: int
+        :return: The generated dialogue or output object.
+        :rtype: Union[Dialog, dict, BaseModel]
         """
         self.llm.seed = seed if seed is not None else random.getrandbits(32)
 
@@ -116,9 +123,10 @@ class DialogGenerator:
         """
         Sets the dialogue details and scenario for generation.
 
-        Args:
-            dialogue_details (str): Instructions or details for the dialogue.
-            scenario (dict): Scenario metadata.
+        :param dialogue_details: Instructions or details for the dialogue.
+        :type dialogue_details: str
+        :param scenario: Scenario metadata.
+        :type scenario: dict
         """
         self.scenario = scenario
         self.dialogue_details = dialogue_details
@@ -137,9 +145,10 @@ class PersonaDialogGenerator(DialogGenerator):
     """
     Generates dialogues between two personas using an LLM.
 
-    Attributes:
-        persona_a (Persona): The first persona.
-        persona_b (Persona): The second persona.
+    :ivar persona_a: The first persona.
+    :vartype persona_a: Persona
+    :ivar persona_b: The second persona.
+    :vartype persona_b: Persona
     """
     def __init__(self,
                  model: Union[ChatOllama, str],
@@ -151,13 +160,18 @@ class PersonaDialogGenerator(DialogGenerator):
         """
         Initializes a PersonaDialogGenerator.
 
-        Args:
-            model (Union[ChatOllama, str]): The LLM or model name to use.
-            persona_a (Persona): The first persona.
-            persona_b (Persona): The second persona.
-            dialogue_details (str): Additional dialogue instructions.
-            response_details (str): Instructions for response style.
-            scenario (dict): Scenario metadata.
+        :param model: The LLM or model name to use.
+        :type model: Union[ChatOllama, str]
+        :param persona_a: The first persona.
+        :type persona_a: Persona
+        :param persona_b: The second persona.
+        :type persona_b: Persona
+        :param dialogue_details: Additional dialogue instructions.
+        :type dialogue_details: str
+        :param response_details: Instructions for response style.
+        :type response_details: str
+        :param scenario: Scenario metadata.
+        :type scenario: dict
         """
 
         dialogue_details = f"""Role play as the following two characters having a conversations. The characters are defined by the personas in the following lines. You always stay in character.

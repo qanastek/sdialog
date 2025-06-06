@@ -13,11 +13,10 @@ def make_serializable(data:dict):
     """
     Converts non-serializable values in a dictionary to strings so the dictionary can be safely serialized to JSON.
 
-    Args:
-        data (dict): The dictionary to process.
-
-    Returns:
-        dict: The dictionary with all values JSON-serializable.
+    :param data: The dictionary to process.
+    :type data: dict
+    :return: The dictionary with all values JSON-serializable.
+    :rtype: dict
     """
 
     for key, value in data.items():

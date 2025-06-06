@@ -40,12 +40,13 @@ class BasePersona(metaclass=Meta):
     """
     Base class for defining a persona (character profile) for role-play.
 
-    Attributes:
-        Arbitrary keyword arguments are stored as persona attributes.
+    :param kwargs: Arbitrary keyword arguments are stored as persona attributes.
     """
     def __init__(self, **kwargs):
         """
         Initializes the persona with arbitrary attributes.
+
+        :param kwargs: Arbitrary persona attributes.
         """
         self.__dict__.update(kwargs)
 
@@ -53,14 +54,17 @@ class BasePersona(metaclass=Meta):
         """
         Returns a string description of the persona's attributes.
 
-        Returns:
-            str: Description of the persona.
+        :return: Description of the persona.
+        :rtype: str
         """
         return "\n".join(f"Your {key}: {value}" for key, value in self.__dict__.items())
 
     def __str__(self) -> str:
         """
         Returns the string representation of the persona.
+
+        :return: Description of the persona.
+        :rtype: str
         """
         return self.description()
 
@@ -68,12 +72,12 @@ class BasePersona(metaclass=Meta):
         """
         Serializes the persona to JSON.
 
-        Args:
-            string (bool): If True, returns a JSON string; otherwise, returns a dict.
-            indent (int): Indentation level for pretty-printing.
-
-        Returns:
-            Union[str, dict]: The serialized persona.
+        :param string: If True, returns a JSON string; otherwise, returns a dict.
+        :type string: bool
+        :param indent: Indentation level for pretty-printing.
+        :type indent: int
+        :return: The serialized persona.
+        :rtype: Union[str, dict]
         """
         data = self.__dict__.copy()
         make_serializable(data)
@@ -84,14 +88,20 @@ class Persona(BasePersona):
     """
     Standard persona class with common attributes for role-play.
 
-    Attributes:
-        name (str): Name of the persona.
-        role (str): Role or occupation.
-        background (str): Background information.
-        personality (str): Personality traits.
-        circumstances (str): Current circumstances.
-        rules (str): Rules or constraints.
-        language (str): Preferred language.
+    :ivar name: Name of the persona.
+    :vartype name: str
+    :ivar role: Role or occupation.
+    :vartype role: str
+    :ivar background: Background information.
+    :vartype background: str
+    :ivar personality: Personality traits.
+    :vartype personality: str
+    :ivar circumstances: Current circumstances.
+    :vartype circumstances: str
+    :ivar rules: Rules or constraints.
+    :vartype rules: str
+    :ivar language: Preferred language.
+    :vartype language: str
     """
     name: str = ""
     role: str = ""
@@ -106,9 +116,10 @@ class PersonaAgent:
     """
     Agent that simulates a persona in dialogue using an LLM.
 
-    Attributes:
-        STOP_WORD (str): Special token to indicate end of conversation.
-        STOP_WORD_TEXT (str): Replacement text for STOP_WORD.
+    :cvar STOP_WORD: Special token to indicate end of conversation.
+    :vartype STOP_WORD: str
+    :cvar STOP_WORD_TEXT: Replacement text for STOP_WORD.
+    :vartype STOP_WORD_TEXT: str
     """
 
     STOP_WORD = "STOP"
@@ -127,16 +138,24 @@ class PersonaAgent:
         """
         Initializes a PersonaAgent for role-play dialogue.
 
-        Args:
-            model (Union[str, ChatOllama]): The LLM or model name to use.
-            persona (BasePersona): The persona to role-play.
-            name (str): Name of the agent.
-            dialogue_details (str): Additional details about the dialogue.
-            response_details (str): Instructions for response style.
-            system_prompt (str): Custom system prompt (optional).
-            can_finish (bool): If True, agent can end the conversation.
-            orchestrators (Union[BaseOrchestrator, List[BaseOrchestrator]]): Orchestrators for agent behavior.
-            scenario (Union[dict, str]): Scenario metadata.
+        :param model: The LLM or model name to use.
+        :type model: Union[str, ChatOllama]
+        :param persona: The persona to role-play.
+        :type persona: BasePersona
+        :param name: Name of the agent.
+        :type name: str
+        :param dialogue_details: Additional details about the dialogue.
+        :type dialogue_details: str
+        :param response_details: Instructions for response style.
+        :type response_details: str
+        :param system_prompt: Custom system prompt (optional).
+        :type system_prompt: str
+        :param can_finish: If True, agent can end the conversation.
+        :type can_finish: bool
+        :param orchestrators: Orchestrators for agent behavior.
+        :type orchestrators: Union[BaseOrchestrator, List[BaseOrchestrator]]
+        :param scenario: Scenario metadata.
+        :type scenario: Union[dict, str]
         """
 
         if not system_prompt:
@@ -180,12 +199,12 @@ Finally, remember:
         """
         Processes an input utterance and generates a response.
 
-        Args:
-            utterance (str): The input utterance from the other agent or user.
-            return_events (bool): If True, returns a list of events instead of just the response string.
-
-        Returns:
-            Union[str, List[Event], None]: The agent's response or events, or None if finished.
+        :param utterance: The input utterance from the other agent or user.
+        :type utterance: str
+        :param return_events: If True, returns a list of events instead of just the response string.
+        :type return_events: bool
+        :return: The agent's response or events, or None if finished.
+        :rtype: Union[str, List[Event], None]
         """
         if self.finished:
             return None
@@ -245,11 +264,10 @@ Finally, remember:
         """
         Adds orchestrators to the agent using the | operator.
 
-        Args:
-            orchestrator (Union[BaseOrchestrator, List[BaseOrchestrator]]): Orchestrator(s) to add.
-
-        Returns:
-            PersonaAgent: The agent with orchestrators added.
+        :param orchestrator: Orchestrator(s) to add.
+        :type orchestrator: Union[BaseOrchestrator, List[BaseOrchestrator]]
+        :return: The agent with orchestrators added.
+        :rtype: PersonaAgent
         """
         self.add_orchestrators(orchestrator)
         return self
@@ -258,11 +276,10 @@ Finally, remember:
         """
         Generates a response to a hypothetical next utterance without updating memory.
 
-        Args:
-            utterance (str): The hypothetical next utterance.
-
-        Returns:
-            str: The predicted response.
+        :param utterance: The hypothetical next utterance.
+        :type utterance: str
+        :return: The predicted response.
+        :rtype: str
         """
         if not utterance:
             return self.llm.invoke(self.memory).content
@@ -272,8 +289,8 @@ Finally, remember:
         """
         Adds orchestrators to the agent.
 
-        Args:
-            orchestrators (Union[BaseOrchestrator, List[BaseOrchestrator]]): Orchestrator(s) to add.
+        :param orchestrators: Orchestrator(s) to add.
+        :type orchestrators: Union[BaseOrchestrator, List[BaseOrchestrator]]
         """
         if not orchestrators:
             return
@@ -299,9 +316,10 @@ Finally, remember:
         """
         Adds a system instruction to the agent's memory.
 
-        Args:
-            instruction (str): The instruction text.
-            persist (bool): If True, instruction persists across turns.
+        :param instruction: The instruction text.
+        :type instruction: str
+        :param persist: If True, instruction persists across turns.
+        :type persist: bool
         """
         self.memory.append(SystemMessage(instruction, response_metadata={"persist": persist}))
 
@@ -309,8 +327,8 @@ Finally, remember:
         """
         Sets the agent's first utterance(s) for dialogue initialization.
 
-        Args:
-            utterances (Union[str, List[str]]): The greeting(s) to use.
+        :param utterances: The greeting(s) to use.
+        :type utterances: Union[str, List[str]]
         """
         self.first_utterances = utterances
 
@@ -318,8 +336,8 @@ Finally, remember:
         """
         Returns the agent's name.
 
-        Returns:
-            str: The agent's name.
+        :return: The agent's name.
+        :rtype: str
         """
         return self.name
 
@@ -327,8 +345,8 @@ Finally, remember:
         """
         Returns the current system prompt.
 
-        Returns:
-            str: The system prompt.
+        :return: The system prompt.
+        :rtype: str
         """
         return self.memory[0].content
 
@@ -336,12 +354,12 @@ Finally, remember:
         """
         Serializes the agent's configuration and persona to JSON.
 
-        Args:
-            string (bool): If True, returns a JSON string; otherwise, returns a dict.
-            indent (int): Indentation level for pretty-printing.
-
-        Returns:
-            Union[str, dict]: The serialized agent.
+        :param string: If True, returns a JSON string; otherwise, returns a dict.
+        :type string: bool
+        :param indent: Indentation level for pretty-printing.
+        :type indent: int
+        :return: The serialized agent.
+        :rtype: Union[str, dict]
         """
         data = {}
         if self.name:
@@ -358,8 +376,8 @@ Finally, remember:
         """
         Resets the agent's memory and orchestrators, optionally reseeding the LLM.
 
-        Args:
-            seed (int): Random seed for reproducibility.
+        :param seed: Random seed for reproducibility.
+        :type seed: int
         """
         self.memory[:] = self.memory[:1]
         self.finished = False
@@ -384,15 +402,18 @@ Finally, remember:
         """
         Simulates a dialogue between this agent and another PersonaAgent.
 
-        Args:
-            persona (PersonaAgent): The other agent to converse with.
-            max_iterations (int): Maximum number of dialogue turns.
-            id (int): Dialogue ID.
-            seed (int): Random seed for reproducibility.
-            keep_bar (bool): If True, keeps the progress bar visible.
-
-        Returns:
-            Dialog: The generated dialogue object.
+        :param persona: The other agent to converse with.
+        :type persona: PersonaAgent
+        :param max_iterations: Maximum number of dialogue turns.
+        :type max_iterations: int
+        :param id: Dialogue ID.
+        :type id: int
+        :param seed: Random seed for reproducibility.
+        :type seed: int
+        :param keep_bar: If True, keeps the progress bar visible.
+        :type keep_bar: bool
+        :return: The generated dialogue object.
+        :rtype: Dialog
         """
         seed = seed if seed is not None else random.getrandbits(32)
 

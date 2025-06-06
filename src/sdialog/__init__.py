@@ -6,10 +6,10 @@ Dialogues are generated primarily via role-playing, where each agent is defined 
 dialogue orchestration, scenario management, and flexible serialization for downstream tasks.
 
 Main components:
-- Dialog, Turn, Event: Data structures for representing dialogues and their events.
-- Persona and PersonaAgent: For defining and simulating role-played agents.
-- Orchestrators: For controlling agent behavior during dialogue generation.
-- Utility functions for serialization, pretty-printing, and file I/O.
+    - Dialog, Turn, Event: Data structures for representing dialogues and their events.
+    - Persona and PersonaAgent: For defining and simulating role-played agents.
+    - Orchestrators: For controlling agent behavior during dialogue generation.
+    - Utility functions for serialization, pretty-printing, and file I/O.
 """
 # SPDX-FileCopyrightText: Copyright © 2025 Idiap Research Institute <contact@idiap.ch>
 # SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>
@@ -31,9 +31,10 @@ class Turn(BaseModel):
     """
     Represents a single turn in a dialogue.
 
-    Attributes:
-        speaker (Optional[str]): The name or role of the speaker.
-        text (str): The utterance text for this turn.
+    :ivar speaker: The name or role of the speaker.
+    :vartype speaker: Optional[str]
+    :ivar text: The utterance text for this turn.
+    :vartype text: str
     """
     speaker: Optional[str]
     text: str
@@ -43,12 +44,16 @@ class Event(BaseModel):
     """
     Represents an event in a dialogue, which may be an utterance, instruction, or other action.
 
-    Attributes:
-        agent (Optional[str]): The agent responsible for the event (e.g., "user", "system").
-        action (str): The type of event (e.g., "utter", "instruct").
-        actionLabel (Optional[str]): A label describing the action (e.g., type of instruction).
-        text (str): The content of the event.
-        timestamp (int): The Unix timestamp of the event.
+    :ivar agent: The agent responsible for the event (e.g., "user", "system").
+    :vartype agent: Optional[str]
+    :ivar action: The type of event (e.g., "utter", "instruct").
+    :vartype action: str
+    :ivar actionLabel: A label describing the action (e.g., type of instruction).
+    :vartype actionLabel: Optional[str]
+    :ivar text: The content of the event.
+    :vartype text: str
+    :ivar timestamp: The Unix timestamp of the event.
+    :vartype timestamp: int
     """
     agent: Optional[str] = None # "user", "system"
     action: str  # "utter", "instruct"
@@ -61,15 +66,22 @@ class Dialog(BaseModel):
     """
     Represents a full dialogue, including turns, events, and scenario metadata.
 
-    Attributes:
-        formatVersion (Optional[str]): Version of the dialogue format.
-        model (Optional[str]): The model used to generate the dialogue.
-        seed (Optional[int]): The random seed used for generation.
-        dialogId (Optional[int]): Unique identifier for the dialogue.
-        complete (Optional[bool]): Whether the dialogue is complete.
-        scenario (Optional[Union[dict, str]]): Scenario description or metadata.
-        turns (List[Turn]): List of dialogue turns.
-        events (Optional[List[Event]]): List of dialogue events (optional).
+    :ivar formatVersion: Version of the dialogue format.
+    :vartype formatVersion: Optional[str]
+    :ivar model: The model used to generate the dialogue.
+    :vartype model: Optional[str]
+    :ivar seed: The random seed used for generation.
+    :vartype seed: Optional[int]
+    :ivar dialogId: Unique identifier for the dialogue.
+    :vartype dialogId: Optional[int]
+    :ivar complete: Whether the dialogue is complete.
+    :vartype complete: Optional[bool]
+    :ivar scenario: Scenario description or metadata.
+    :vartype scenario: Optional[Union[dict, str]]
+    :ivar turns: List of dialogue turns.
+    :vartype turns: List[Turn]
+    :ivar events: List of dialogue events (optional).
+    :vartype events: Optional[List[Event]]
     """
     formatVersion: Optional[str] = "0.0.5"  # Version of the format
     model: Optional[str] = None  # the model used to generate the dialogue
@@ -81,18 +93,22 @@ class Dialog(BaseModel):
     events: Optional[List[Event]] = None
 
     def __len__(self):
-        """Returns the number of turns in the dialogue."""
+        """
+        Returns the number of turns in the dialogue.
+
+        :return: Number of turns.
+        :rtype: int
+        """
         return len(self.turns)
 
     def description(self, turn_template: str = "{speaker}: {text}"):
         """
         Returns a human-readable string representation of the dialogue.
 
-        Args:
-            turn_template (str): Template for formatting each turn.
-
-        Returns:
-            str: The formatted dialogue.
+        :param turn_template: Template for formatting each turn.
+        :type turn_template: str
+        :return: The formatted dialogue.
+        :rtype: str
         """
         return "\n".join(turn_template.format(speaker=turn.speaker, text=turn.text.replace("\n", " "))
                          for turn in self.turns)
@@ -101,12 +117,12 @@ class Dialog(BaseModel):
         """
         Serializes the dialogue to JSON.
 
-        Args:
-            string (bool): If True, returns a JSON string; otherwise, returns a dict.
-            indent (int): Indentation level for pretty-printing.
-
-        Returns:
-            Union[str, dict]: The serialized dialogue.
+        :param string: If True, returns a JSON string; otherwise, returns a dict.
+        :type string: bool
+        :param indent: Indentation level for pretty-printing.
+        :type indent: int
+        :return: The serialized dialogue.
+        :rtype: Union[str, dict]
         """
         data = self.model_dump()
         make_serializable(data)
@@ -116,9 +132,10 @@ class Dialog(BaseModel):
         """
         Pretty-prints the dialogue to the console.
 
-        Args:
-            scenario (bool): If True, prints scenario information.
-            orchestration (bool): If True, prints orchestration events.
+        :param scenario: If True, prints scenario information.
+        :type scenario: bool
+        :param orchestration: If True, prints orchestration events.
+        :type orchestration: bool
         """
         print_dialog(self, *a, **kw)
 
@@ -126,10 +143,12 @@ class Dialog(BaseModel):
         """
         Saves the dialogue to a file in either JSON or plain text format.
 
-        Args:
-            path (str): Output file path.
-            type (str): "json", "txt", or "auto" (determined by file extension).
-            makedir (bool): If True, creates parent directories as needed.
+        :param path: Output file path.
+        :type path: str
+        :param type: "json", "txt", or "auto" (determined by file extension).
+        :type type: str
+        :param makedir: If True, creates parent directories as needed.
+        :type makedir: bool
         """
         if type == "auto":
             type = "json" if path.endswith(".json") else "txt"
@@ -148,12 +167,12 @@ class Dialog(BaseModel):
         """
         Loads a dialogue from a file.
 
-        Args:
-            path (str): Path to the dialogue file.
-            type (str): "json", "txt", or "auto" (determined by file extension).
-
-        Returns:
-            Dialog: The loaded dialogue object.
+        :param path: Path to the dialogue file.
+        :type path: str
+        :param type: "json", "txt", or "auto" (determined by file extension).
+        :type type: str
+        :return: The loaded dialogue object.
+        :rtype: Dialog
         """
         if type == "auto":
             type = "json" if path.endswith(".json") else "txt"
@@ -177,9 +196,10 @@ class Instruction(BaseModel):
     """
     Represents an instruction to an agent, optionally with associated events.
 
-    Attributes:
-        text (str): The instruction text.
-        events (Optional[Union[Event, List[Event]]]): Associated events (optional).
+    :ivar text: The instruction text.
+    :vartype text: str
+    :ivar events: Associated events (optional).
+    :vartype events: Optional[Union[Event, List[Event]]]
     """
     text: str = None
     events: Optional[Union[Event, List[Event]]] = None  # extra events
@@ -189,10 +209,12 @@ def print_dialog(dialog: Union[Dialog, dict], scenario: bool = False, orchestrat
     """
     Pretty-prints a dialogue to the console, with optional scenario and orchestration details.
 
-    Args:
-        dialog (Union[Dialog, dict]): The dialogue to print.
-        scenario (bool): If True, prints scenario information.
-        orchestration (bool): If True, prints orchestration events instead of turns.
+    :param dialog: The dialogue to print.
+    :type dialog: Union[Dialog, dict]
+    :param scenario: If True, prints scenario information.
+    :type scenario: bool
+    :param orchestration: If True, prints orchestration events instead of turns.
+    :type orchestration: bool
     """
     if type(dialog) == dict:
         dialog = Dialog.model_validate(dialog)
