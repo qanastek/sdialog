@@ -8,7 +8,7 @@
 
 **SDialog** is a modular, extensible Python toolkit for synthetic dialogue generation and analysis, designed for research and development with instruction-tuned Large Language Models (LLMs). It enables flexible, persona-driven, multi-agent dialogue simulation, orchestration, and scenario management, making it ideal for building, evaluating, and experimenting with conversational agents.
 
-## Motivation
+## 🚀 Motivation
 
 Modern conversational AI research and applications increasingly require high-quality, flexible, and reproducible synthetic dialogues for training, evaluation, and benchmarking. SDialog addresses the need for:
 - **Standardization:** Clear definitions for dialogue, persona, and event structures.
@@ -17,7 +17,7 @@ Modern conversational AI research and applications increasingly require high-qua
 - **LLM Integration:** Seamless integration with instruction-tuned LLMs, prompt management, and memory handling.
 - **Scenario and Dataset Management:** Tools for managing complex scenarios, flowcharts, and persona definitions.
 
-## Features
+## ✨ Features
 
 - **Persona-based Role-Playing:** Define rich agent personas to simulate realistic conversations.
 - **Multi-Agent Dialogue:** Generate dialogues between multiple agents, each with their own persona and behavior.
@@ -26,7 +26,7 @@ Modern conversational AI research and applications increasingly require high-qua
 - **Flexible Serialization:** Export dialogues and events in JSON or plain text for downstream tasks.
 - **Integration with LLMs:** Out-of-the-box support for [Ollama](https://ollama.com/) and [LangChain](https://python.langchain.com/), with planned support for HuggingFace models.
 
-## Installation
+## ⚡ Installation
 
 ```bash
 pip install sdialog
@@ -37,7 +37,7 @@ pip install sdialog
 > curl -fsSL https://ollama.com/install.sh | sh
 > ```
 
-## Quick Start
+## 🏁 Quick Start
 
 Define personas, create agents, and generate a dialogue:
 
@@ -57,7 +57,7 @@ dialog = alice_agent.dialog_with(bob_agent, max_iterations=10)
 dialog.print()
 ```
 
-## Orchestration Example
+## 🎛️ Orchestration Example
 
 Add orchestration to control dialogue length or simulate agent behaviors:
 
@@ -69,7 +69,7 @@ mind_orch = ChangeMindOrchestrator(probability=0.5, reasons=["changed plans", "n
 alice_agent = alice_agent | length_orch | mind_orch
 ```
 
-## STAR Dataset Integration
+## 📚 STAR Dataset Integration
 
 Work with the STAR dataset for scenario-driven dialogue generation:
 
@@ -81,18 +81,13 @@ dialog = STAR.get_dialog(123)
 dialog.print(scenario=True)
 ```
 
-## Documentation
+## 📖 Documentation
 
 - **[Documentation](https://sdialog.readthedocs.io)** - Full package documentation, including installation, API reference, usage guides, and advanced examples available.
 - **[API Reference](https://https://sdialog.readthedocs.io/en/latest/api/index.html):** See docstrings in the codebase for detailed documentation of all classes and functions.
 - **[Tutorials](https://github.com/idiap/sdialog/tree/main/tutorials):** Tutorials for hands-on examples as Jupyter Notebooks.
 
-
-## License
+## 📝 License
 
 MIT License  
 Copyright (c) 2025 Idiap Research Institute
-
----
-
-For questions or contributions, please open an issue or pull request on [GitHub](https://github.com/idiap/sdialog).
