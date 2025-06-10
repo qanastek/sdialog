@@ -11,6 +11,7 @@
 ## 🚀 Motivation
 
 Modern conversational AI research and applications increasingly require high-quality, flexible, and reproducible synthetic dialogues for training, evaluation, and benchmarking. SDialog addresses the need for:
+
 - **Standardization:** Clear definitions for dialogue, persona, and event structures.
 - **Abstraction:** Abstract interfaces for both single-agent and multi-agent dialogue generation.
 - **Fine-grained Control:** Orchestration to inject instructions, simulate user behaviors, and enforce scenario constraints.
@@ -53,7 +54,7 @@ alice_agent = PersonaAgent("llama2", persona=alice, name="Alice")
 bob_agent = PersonaAgent("llama2", persona=bob, name="Bob")
 
 # Generate a dialogue
-dialog = alice_agent.dialog_with(bob_agent, max_iterations=10)
+dialog = alice_agent.dialog_with(bob_agent)
 dialog.print()
 ```
 
@@ -86,6 +87,14 @@ dialog.print(scenario=True)
 - **[Documentation](https://sdialog.readthedocs.io)** - Full package documentation, including installation, API reference, usage guides, and advanced examples available.
 - **[API Reference](https://https://sdialog.readthedocs.io/en/latest/api/index.html):** See docstrings in the codebase for detailed documentation of all classes and functions.
 - **[Tutorials](https://github.com/idiap/sdialog/tree/main/tutorials):** Tutorials for hands-on examples as Jupyter Notebooks.
+
+
+## 🙏 Acknowledgments
+
+This work was supported by the EU Horizon 2020 project [ELOQUENCE](https://eloquenceai.eu/) (grant number 101070558).
+Additionally, this work was further improved and developed in the 2025 Jelinek Memorial Summer Workshop on Speech and Language Technologies ([JSALT 2025](https://jsalt2025.fit.vut.cz/)) as part of the work done by the ["Play your Part" research group](https://jsalt2025.fit.vut.cz/play-your-part).
+JSALT 2025 was, in turn, partially supported by Johns Hopkins University and the EU project ESPERANTO (grant number 101007666).
+
 
 ## 📝 License
 
