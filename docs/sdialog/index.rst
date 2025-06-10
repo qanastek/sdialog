@@ -1,7 +1,7 @@
 The SDialog Library
 -------------------
 
-SDialog is organized around several core abstractions and modules, each designed to provide flexibility, extensibility, and ease of use. Below, we introduce the main components of the library and their roles in the synthetic dialogue generation workflow.
+SDialog is organized around several core abstractions and modules, each designed to provide flexibility, extensibility, and ease of use. Below, the main components of the library and their roles in the synthetic dialogue generation workflow are introduced.
 
 1. Dialogue Data Structures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -11,8 +11,11 @@ At the heart of SDialog are data structures that represent the building blocks o
 Turn
 ^^^^
 
+The ``Turn`` class models a single utterance in a dialogue, capturing both the speaker and the content of the utterance. This is the fundamental unit for constructing dialogue sequences.
+
 - **Purpose:** Represents a single utterance in a dialogue.
 - **Fields:**
+
   - ``speaker``: The name or role of the speaker (e.g., "User", "System", "Alice").
   - ``text``: The utterance text for this turn.
 - **Usage:** Used to build up the sequence of utterances in a dialogue.
@@ -29,8 +32,11 @@ Turn
 Event
 ^^^^^
 
+The ``Event`` class captures actions within a dialogue, which may include utterances, instructions, or other events. Events provide metadata for tracking and analyzing the flow and orchestration of conversations.
+
 - **Purpose:** Represents an action in the dialogue, which may be an utterance, instruction, or other event.
 - **Fields:**
+
   - ``agent``: The agent responsible for the event (e.g., "user", "system").
   - ``action``: The type of event (e.g., "utter", "instruct", "pick_suggestion").
   - ``actionLabel``: A label describing the action (e.g., type of instruction).
@@ -51,8 +57,11 @@ Event
 Dialog
 ^^^^^^
 
+The ``Dialog`` class represents a complete conversation, including its sequence of turns, associated events, and scenario metadata. It provides methods for serialization, pretty-printing, and file I/O, supporting both human-readable and machine-processable formats.
+
 - **Purpose:** Represents a full dialogue, including turns, events, and scenario metadata.
 - **Fields:**
+
   - ``formatVersion``: Version of the dialogue format.
   - ``model``: The model used to generate the dialogue.
   - ``seed``: The random seed used for generation.
@@ -62,6 +71,7 @@ Dialog
   - ``turns``: List of ``Turn`` objects representing the conversation.
   - ``events``: Optional list of ``Event`` objects for detailed event tracking.
 - **Methods:**
+
   - ``description()``: Returns a human-readable string representation of the dialogue.
   - ``json()``: Serializes the dialogue to JSON or dict.
   - ``print()``: Pretty-prints the dialogue to the console.
@@ -87,13 +97,16 @@ Dialog
 2. Personas and Agents
 ~~~~~~~~~~~~~~~~~~~~~~
 
-SDialog enables rich, persona-driven dialogue generation by allowing you to define detailed character profiles and simulate agents that role-play these personas. This abstraction makes it easy to create realistic, diverse, and controllable conversational agents.
+SDialog enables rich, persona-driven dialogue generation by allowing the definition of detailed character profiles and the simulation of agents that role-play these personas. This abstraction supports the creation of realistic, diverse, and controllable conversational agents.
 
 Persona
 ^^^^^^^
 
+The ``Persona`` class defines a character profile for role-playing in dialogue generation. It includes fields for name, role, background, personality, circumstances, rules, and language, which are used to generate system prompts and maintain consistent agent behavior.
+
 - **Purpose:** Defines a character profile for role-playing in dialogue generation.
 - **Fields:**
+
   - ``name``: Name of the persona.
   - ``role``: Role or occupation (e.g., "barista", "customer").
   - ``background``: Background information.
@@ -123,14 +136,18 @@ Persona
 PersonaAgent
 ^^^^^^^^^^^^
 
+The ``PersonaAgent`` class simulates an agent that role-plays a given Persona using an LLM. It maintains a memory of the conversation, supports orchestration for injecting instructions or controlling behavior, and can be seeded for reproducible dialogue generation.
+
 - **Purpose:** Simulates an agent that role-plays a given Persona using an LLM.
 - **Features:**
+
   - Maintains a memory of the conversation (system, user, and AI messages).
   - Supports orchestration for injecting instructions or controlling behavior.
   - Can be seeded for reproducible dialogue generation.
   - Supports flexible greeting/first utterance configuration.
   - Can serialize its configuration and persona for reproducibility.
 - **Methods:**
+
   - ``__call__()``: Processes an input utterance and generates a response.
   - ``dialog_with()``: Simulates a dialogue with another PersonaAgent.
   - ``add_orchestrators()``, ``clear_orchestrators()``: Manage orchestration.
@@ -150,7 +167,7 @@ PersonaAgent
     bob_agent = PersonaAgent("llama2", persona=bob, name="Bob")
 
     # Simulate a dialogue
-    dialog = alice_agent.dialog_with(bob_agent, max_iterations=5)
+    dialog = alice_agent.dialog_with(bob_agent)
     dialog.print()
 
 ----
@@ -158,13 +175,16 @@ PersonaAgent
 3. Orchestration
 ~~~~~~~~~~~~~~~~
 
-To enable fine-grained control over dialogue generation, SDialog introduces the concept of orchestrators. Orchestrators are modular components that can inject instructions, enforce constraints, or simulate specific behaviors in agents during a conversation.
+To enable fine-grained control over dialogue generation, SDialog introduces the concept of orchestrators. Orchestrators are modular components that can inject instructions, enforce constraints, or simulate specific behaviors in agents during a conversation. This section describes the orchestration mechanism and provides examples of built-in orchestrators.
 
 BaseOrchestrator
 ^^^^^^^^^^^^^^^^
 
+The ``BaseOrchestrator`` is the abstract base class for all orchestrators. It provides methods for generating instructions, managing persistence, event labeling, and serialization. Orchestrators can be attached to a ``PersonaAgent`` to influence its behavior during dialogue generation.
+
 - **Purpose:** Abstract base class for all orchestrators.
 - **Features:**
+
   - Can be attached to a PersonaAgent.
   - Provides methods for generating instructions, managing persistence, and event labeling.
   - Supports serialization for reproducibility.
@@ -183,7 +203,7 @@ BaseOrchestrator
 Example Orchestrators
 ^^^^^^^^^^^^^^^^^^^^^
 
-SDialog provides several built-in orchestrators for common dialogue control patterns:
+SDialog provides several built-in orchestrators for common dialogue control patterns. These orchestrators can be used to trigger instructions based on conditions, control dialogue length, simulate mind changes, suggest responses, or provide a sequence of instructions.
 
 - **SimpleReflexOrchestrator:** Triggers instructions based on a condition (e.g., if a certain keyword is present in the utterance).
 
@@ -263,8 +283,11 @@ SDialog provides high-level generators to automate the creation of synthetic dia
 DialogGenerator
 ^^^^^^^^^^^^^^^
 
+The ``DialogGenerator`` class generates synthetic dialogues using an LLM, given dialogue details and output format. It supports arbitrary system and user prompts, output schemas, and reproducibility via seeding.
+
 - **Purpose:** Generates synthetic dialogues using an LLM, given dialogue details and output format.
 - **Features:**
+
   - Supports arbitrary system and user prompts.
   - Can be configured with output schemas (e.g., Pydantic models).
   - Handles seeding and prompt management for reproducibility.
@@ -283,8 +306,11 @@ DialogGenerator
 PersonaDialogGenerator
 ^^^^^^^^^^^^^^^^^^^^^^
 
+The ``PersonaDialogGenerator`` class generates dialogues between two personas, enforcing role-play and scenario constraints. It automatically constructs system prompts for both personas and ensures the dialogue starts with a greeting and follows scenario instructions.
+
 - **Purpose:** Generates dialogues between two personas, enforcing role-play and scenario constraints.
 - **Features:**
+
   - Automatically constructs system prompts for both personas.
   - Ensures the dialogue starts with a greeting and follows scenario instructions.
   - Supports scenario metadata and output formatting.
@@ -312,8 +338,11 @@ SDialog includes utilities for working with external datasets and for managing c
 STAR Dataset Utilities
 ^^^^^^^^^^^^^^^^^^^^^^
 
+The STAR dataset utilities provide functions for loading, parsing, and describing dialogues, scenarios, flowcharts, and personas from the STAR dataset. These tools support scenario-driven dialogue generation and analysis.
+
 - **Purpose:** Provides functions for loading, parsing, and describing dialogues, scenarios, flowcharts, and personas from the STAR dataset.
 - **Features:**
+
   - Load dialogues by ID, filter by domain, task, or scenario attributes.
   - Extract scenario descriptions, flowcharts (in DOT format), and example responses.
   - Construct PersonaAgent objects for simulation and evaluation.
@@ -339,8 +368,11 @@ STAR Dataset Utilities
 Scenario Management
 ^^^^^^^^^^^^^^^^^^^
 
+Scenario management tools in SDialog allow for the generation of natural language descriptions of scenarios, extraction and visualization of flowcharts, and construction of personas and agents based on scenario metadata.
+
 - **Purpose:** Easily describe and manage dialogue scenarios, including flowcharts and user/system goals.
 - **Features:**
+
   - Generate natural language descriptions of scenarios.
   - Extract and visualize flowcharts for tasks.
   - Construct personas and agents based on scenario metadata.
@@ -360,7 +392,7 @@ Scenario Management
 
     from sdialog.datasets import STAR
     system_agent, user_agent = STAR.get_agents_for_scenario(scenario, "llama2")
-    dialog = system_agent.dialog_with(user_agent, max_iterations=8)
+    dialog = system_agent.dialog_with(user_agent)
     dialog.print()
 
 ----
@@ -372,6 +404,8 @@ To support the full workflow, SDialog provides utility functions for serializati
 
 Serialization
 ^^^^^^^^^^^^^
+
+The serialization utilities in SDialog allow for exporting dialogues and events as JSON or plain text for downstream tasks, training, or analysis. Flexible file I/O is supported for saving and loading dialogues.
 
 - **Export dialogues and events** as JSON or plain text for downstream tasks, training, or analysis.
 - **Flexible file I/O**: Save and load dialogues using ``Dialog.to_file()`` and ``Dialog.from_file()``.
@@ -394,6 +428,8 @@ Serialization
 
 Pretty-printing
 ^^^^^^^^^^^^^^^
+
+SDialog provides pretty-printing utilities to visualize dialogues in the console with color-coded speakers and events for easy inspection and debugging. Scenario and orchestration visualization is also supported.
 
 - **Visualize dialogues** in the console with color-coded speakers and events for easy inspection and debugging.
 - **Scenario and orchestration visualization**: Print scenario metadata and orchestration events alongside dialogue turns.
