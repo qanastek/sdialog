@@ -131,14 +131,14 @@ class Dialog(BaseModel):
 
     def print(self, *a, **kw):
         """
-        Pretty-prints the dialogue to the console.
+        Pretty-prints a dialogue to the console, with optional scenario and orchestration details.
 
         :param scenario: If True, prints scenario information.
         :type scenario: bool
         :param orchestration: If True, prints orchestration events.
         :type orchestration: bool
         """
-        print_dialog(self, *a, **kw)
+        _print_dialog(self, *a, **kw)
 
     def to_file(self, path: str, type: str = "auto", makedir: bool = True):
         """
@@ -206,7 +206,7 @@ class Instruction(BaseModel):
     events: Optional[Union[Event, List[Event]]] = None  # extra events
 
 
-def print_dialog(dialog: Union[Dialog, dict], scenario: bool = False, orchestration: bool = False):
+def _print_dialog(dialog: Union[Dialog, dict], scenario: bool = False, orchestration: bool = False):
     """
     Pretty-prints a dialogue to the console, with optional scenario and orchestration details.
 
@@ -214,7 +214,7 @@ def print_dialog(dialog: Union[Dialog, dict], scenario: bool = False, orchestrat
     :type dialog: Union[Dialog, dict]
     :param scenario: If True, prints scenario information.
     :type scenario: bool
-    :param orchestration: If True, prints orchestration events instead of turns.
+    :param orchestration: If True, prints also orchestration events.
     :type orchestration: bool
     """
     if type(dialog) == dict:
