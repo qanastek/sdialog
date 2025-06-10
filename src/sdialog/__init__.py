@@ -6,6 +6,7 @@ Dialogues are generated primarily via role-playing, where each agent is defined 
 dialogue orchestration, scenario management, and flexible serialization for downstream tasks.
 
 Main components:
+
     - Dialog, Turn, Event: Data structures for representing dialogues and their events.
     - Persona and PersonaAgent: For defining and simulating role-played agents.
     - Orchestrators: For controlling agent behavior during dialogue generation.

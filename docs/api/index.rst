@@ -1,6 +1,15 @@
 API Reference
 =============
 
+sdialog package
+---------------
+
+.. automodule:: sdialog
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 Submodules
 ----------
 
