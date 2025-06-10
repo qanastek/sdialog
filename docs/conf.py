@@ -18,7 +18,7 @@ from os import path
 from codecs import open
 from datetime import datetime
 
-sys.path.insert(0, os.path.abspath('../src/sdialog'))
+sys.path.insert(0, os.path.abspath('../src/'))
 
 _version_re__ = r"__version__\s*=\s*['\"]([^'\"]+)['\"]"
 __cwd__ = path.abspath(path.dirname(__file__))
