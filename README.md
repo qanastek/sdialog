@@ -92,8 +92,8 @@ dialog.print(scenario=True)
 ## 🙏 Acknowledgments
 
 This work was supported by the EU Horizon 2020 project [ELOQUENCE](https://eloquenceai.eu/) (grant number 101070558).
-Additionally, this work was further improved and developed in the 2025 Jelinek Memorial Summer Workshop on Speech and Language Technologies ([JSALT 2025](https://jsalt2025.fit.vut.cz/)) as part of the work done by the ["Play your Part" research group](https://jsalt2025.fit.vut.cz/play-your-part).
-JSALT 2025 was, in turn, partially supported by Johns Hopkins University and the EU project ESPERANTO (grant number 101007666).
+
+This work was also initially created in preparation for the 2025 Jelinek Memorial Summer Workshop on Speech and Language Technologies ([JSALT 2025](https://jsalt2025.fit.vut.cz/)) as part of the work done by the ["Play your Part" research group](https://jsalt2025.fit.vut.cz/play-your-part).
 
 
 ## 📝 License
