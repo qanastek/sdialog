@@ -1,3 +1,10 @@
 sphinx>=2.2.1
 sphinx_rtd_theme>=0.4.3
 pydantic
+print-color
+tqdm
+langchain
+langchain-ollama
+langchain-huggingface
+numpy
+sentence-transformers
