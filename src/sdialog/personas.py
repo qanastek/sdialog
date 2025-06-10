@@ -23,7 +23,7 @@ from .orchestrators import BaseOrchestrator
 from .util import make_serializable
 
 
-class Meta(type):
+class __Meta__(type):
     """
     Metaclass for enabling automatic __init__ chaining in subclasses.
     """
@@ -36,7 +36,7 @@ class Meta(type):
             cls.__init__ = auto__call__init__
 
 
-class BasePersona(metaclass=Meta):
+class BasePersona(metaclass=__Meta__):
     """
     Base class for defining a persona (character profile) for role-play.
 
