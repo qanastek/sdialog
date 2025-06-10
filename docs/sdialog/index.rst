@@ -89,7 +89,7 @@ The ``Dialog`` class represents a complete conversation, including its sequence 
             Turn(speaker="Bob", text="Hello, Alice!")
         ]
     )
-    print(dialog.description())
+    print(dialog)
     dialog.print()
 
 ----
@@ -131,7 +131,7 @@ The ``Persona`` class defines a character profile for role-playing in dialogue g
         rules="Always greet the customer",
         language="English"
     )
-    print(alice.description())
+    print(alice)
 
 PersonaAgent
 ^^^^^^^^^^^^

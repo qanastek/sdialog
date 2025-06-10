@@ -18,7 +18,15 @@ from os import path
 from codecs import open
 from datetime import datetime
 
+# Ensure the source directory is in sys.path for autodoc to find the modules
 sys.path.insert(0, os.path.abspath('../src/'))
+
+
+# Mock imports for Sphinx documentation generation
+autodoc_mock_imports = ['pydantic', 'print_color', 'tqdm', 'langchain', 'langchain_core',
+                        'langchain_ollama', 'langchain_huggingface', 'numpy', 'sentence_transformers']
+
+# -- Project version ---------------------------------------------------------
 
 _version_re__ = r"__version__\s*=\s*['\"]([^'\"]+)['\"]"
 __cwd__ = path.abspath(path.dirname(__file__))

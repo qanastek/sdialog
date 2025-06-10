@@ -2,7 +2,7 @@ Practical Examples
 ------------------
 
 Basic Persona-based Dialogue
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This example demonstrates how to define two personas, instantiate agents for each persona, and generate a simple dialogue between them using an LLM. The agents will role-play their respective personas and interact for a fixed number of turns.
 
@@ -50,7 +50,7 @@ This example shows how to add orchestration to the dialogue generation process. 
     dialog.print()
 
 Using STAR Dataset Utilities
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This example demonstrates how to use SDialog's STAR dataset utilities. You can set the dataset path, load a dialogue by its ID, print it with scenario information, and extract scenario descriptions and agents for simulation.
 
