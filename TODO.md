@@ -10,3 +10,4 @@
 - [ ] As with `Persona`, define a `BaseScenario` and a `Scenario` classes
 - [ ] Add `InstructAtTurnsOrchestrator` to provide instructions at given turns (`{3: "do this", 7: "do that"}`)
 - [ ] Allow `PersonaGenerator` to also take as input agents (and call `agent_a.talk_with(agent_b)` under the hood)
+- [ ] Add integration with Dialog2Flow for dialog flow visualization.
