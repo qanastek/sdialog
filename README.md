@@ -1,7 +1,7 @@
 # SDialog
 [![Documentation Status](https://app.readthedocs.org/projects/sdialog/badge/?version=latest)](https://sdialog.readthedocs.io)
 [![CI](https://img.shields.io/github/actions/workflow/status/idiap/sdialog/ci.yml?label=CI)](https://github.com/idiap/sdialog/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/idiap/sdialog/graph/badge.svg?token=2210USI8I0)](https://codecov.io/gh/idiap/sdialog)
+[![codecov](https://codecov.io/gh/idiap/sdialog/graph/badge.svg?token=2210USI8I0)](https://app.codecov.io/gh/idiap/sdialog?displayType=list)
 [![PyPI version](https://badge.fury.io/py/sdialog.svg)](https://badge.fury.io/py/sdialog)
 [![Downloads](https://static.pepy.tech/badge/sdialog)](https://pepy.tech/project/sdialog)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/idiap/sdialog/master?filepath=tutorials)
