@@ -12,10 +12,9 @@ import random
 
 from time import time
 from tqdm.auto import trange
-from print_color import print
-from typing import List, Union, Optional
+
+from typing import List, Union
 from langchain_ollama.chat_models import ChatOllama
-# from langchain_core.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
 from . import Dialog, Turn, Event, Instruction
@@ -126,11 +125,12 @@ class PersonaAgent:
     STOP_WORD_TEXT = "(bye bye!)"
 
     def __init__(self,
-                 model : Union[str, ChatOllama],
+                 model: Union[str, ChatOllama],
                  persona: BasePersona = Persona(),
                  name: str = None,
                  dialogue_details: str = "",
-                 response_details: str = "responses SHOULD NOT be too long and wordy, should be approximately one utterance long",
+                 response_details: str = "responses SHOULD NOT be too long and wordy, should be "
+                                         "approximately one utterance long",
                  system_prompt: str = None,
                  can_finish: bool = False,
                  orchestrators: Union[BaseOrchestrator, List[BaseOrchestrator]] = None,
@@ -160,9 +160,12 @@ class PersonaAgent:
 
         if not system_prompt:
             if can_finish:
-                conversation_end_instructions = f"To finish the conversation you first have to say good bye and immediately after you **MUST** output '{self.STOP_WORD}' to indicate it is the end of it."
+                conversation_end_instructions = "To finish the conversation you first have to say good bye and " \
+                                                 f"immediately after you **MUST** output '{self.STOP_WORD}' to " \
+                                                 "indicate it is the end of it."
             else:
-                conversation_end_instructions = "When the user finish the conversation you should say good bye and also finish the conversation"
+                conversation_end_instructions = "When the user finish the conversation you should say good bye and " \
+                                                "also finish the conversation"
 
             # system_prompt = prompt_template.format(role=role, ...)
             system_prompt = f"""Role play as a character that is described by the persona defined in the following lines. You always stay in character.
@@ -177,7 +180,7 @@ Finally, remember:
    2. Your first utterance / turn MUST always be a short generic greeting (e.g. "Hello, how are you?", "Hi!", "hey! what's up?", etc.), and nothing else, wait for a reply before start with the actual conversation.
    3. {conversation_end_instructions}."""
 
-        if type(model) == str:
+        if type(model) is str:
             # TODO: ChatHuggingFace
             self.llm = ChatOllama(model=model,
                                   temperature=0.8,
@@ -212,16 +215,19 @@ Finally, remember:
         if utterance:
             self.memory.append(HumanMessage(content=utterance))
 
-        if return_events: events = []
+        if return_events:
+            events = []
         if self.orchestrators:
             for orchestrator in self.orchestrators:
                 instruction = orchestrator()
                 if instruction:
 
-                    if type(instruction) == Instruction:
+                    if type(instruction) is Instruction:
                         if return_events and instruction.events:
-                            if type(instruction.events) == Event: events.append(instruction.events)
-                            else: events.extend(instruction.events)
+                            if type(instruction.events) is Event:
+                                events.append(instruction.events)
+                            else:
+                                events.extend(instruction.events)
                         instruction = instruction.text
 
                     persist = orchestrator.is_persistent()
@@ -234,14 +240,18 @@ Finally, remember:
                                             timestamp=int(time())))
 
         if len(self.memory) <= 1 and self.first_utterances:
-            response = random.choice(self.first_utterances) if type(self.first_utterances) == list else self.first_utterances
+            response = random.choice(self.first_utterances) \
+                       if type(self.first_utterances) is list \
+                       else self.first_utterances
             response = AIMessage(content=response)
         else:
             response = self.llm.invoke(self.memory)
 
         if self.orchestrators:
             self.memory[:] = [msg for msg in self.memory
-                              if not (msg.response_metadata and "persist" in msg.response_metadata and not msg.response_metadata["persist"])]
+                              if not (msg.response_metadata
+                                      and "persist" in msg.response_metadata
+                                      and not msg.response_metadata["persist"])]
         self.memory.append(response)
 
         response = response.content
@@ -295,7 +305,7 @@ Finally, remember:
         if not orchestrators:
             return
 
-        if self.orchestrators == None:
+        if self.orchestrators is None:
             self.orchestrators = []
 
         if isinstance(orchestrators, BaseOrchestrator):
@@ -372,7 +382,7 @@ Finally, remember:
             data["persona"]["orchestrators"] = [orc.json() for orc in self.orchestrators]
         return json.dumps(data, indent=indent) if string else data
 
-    def reset(self, seed:int = None):
+    def reset(self, seed: int = None):
         """
         Resets the agent's memory and orchestrators, optionally reseeding the LLM.
 
@@ -387,7 +397,8 @@ Finally, remember:
             for orchestrator in self.orchestrators:
                 orchestrator.reset()
 
-        # hack to avoid seed bug in prompt cache (to force a new cache, related to https://github.com/ollama/ollama/issues/5321)
+        # hack to avoid seed bug in prompt cache
+        # (to force a new cache, related to https://github.com/ollama/ollama/issues/5321)
         _ = self.llm.num_predict
         self.llm.num_predict = 1
         self.llm.invoke(self.memory)
@@ -433,7 +444,8 @@ Finally, remember:
             if utt_events and utt_events[-1].action == "utter":
                 utter = utt_events[-1].text
                 utt_events[-1].text = utter.replace(self.STOP_WORD_TEXT, "").strip()
-                if not utt_events[-1].text: break
+                if not utt_events[-1].text:
+                    break
             else:
                 completion = True
                 break
@@ -448,7 +460,8 @@ Finally, remember:
             if utt_events and utt_events[-1].action == "utter":
                 utter = utt_events[-1].text
                 utt_events[-1].text = utter.replace(self.STOP_WORD_TEXT, "").strip()
-                if not utt_events[-1].text: break
+                if not utt_events[-1].text:
+                    break
             else:
                 completion = True
                 break

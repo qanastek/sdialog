@@ -4,6 +4,7 @@ from sdialog import Dialog
 
 MODEL = "smollm:135m"
 
+
 # Patch LLM call
 class DummyLLM:
     seed = 0
@@ -32,11 +33,13 @@ def test_base_persona_description_and_json():
     js_str = p.json(string=True)
     assert isinstance(js_str, str)
 
+
 def test_persona_fields():
     p = Persona(name="Alice", role="barista", background="Cafe")
     assert p.name == "Alice"
     assert p.role == "barista"
     assert p.background == "Cafe"
+
 
 def test_persona_agent_init(monkeypatch):
     persona = Persona(name="Alice")
@@ -48,6 +51,7 @@ def test_persona_agent_init(monkeypatch):
     agent.clear_orchestrators()
     agent.reset(seed=42)
 
+
 def test_persona_and_json():
     persona = Persona(name="Alice", role="barista", background="Works at a cafe")
     desc = persona.description()
@@ -58,12 +62,14 @@ def test_persona_and_json():
     assert isinstance(js_str, str)
     assert "Alice" in js_str
 
+
 def test_persona_agent_init_and_prompt():
     persona = Persona(name="Alice", role="barista")
     agent = PersonaAgent(MODEL, persona=persona, name="Alice")
     assert agent.get_name() == "Alice"
     prompt = agent.get_prompt()
     assert "Role play" in prompt
+
 
 def test_persona_agent_dialog_with():
     persona1 = Persona(name="A")

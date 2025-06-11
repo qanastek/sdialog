@@ -4,6 +4,7 @@ from sdialog.datasets import STAR
 def test_star_import():
     assert STAR is not None
 
+
 def test_star_set_path_and_get_dialog(monkeypatch):
     # Patch internal loading to avoid file I/O
     monkeypatch.setattr(STAR, "set_path", lambda path: None)
@@ -12,6 +13,7 @@ def test_star_set_path_and_get_dialog(monkeypatch):
     dialog = STAR.get_dialog(123)
     assert dialog is not None
     dialog.print()
+
 
 def test_star_get_agents_for_scenario(monkeypatch):
     # Patch to return dummy agents

@@ -18,6 +18,7 @@ from . import Dialog, Turn, Event
 from .personas import Persona, PersonaAgent
 from .orchestrators import InstructionListOrchestrator, SimpleResponseOrchestrator
 
+
 class STAR:
     """
     Utility class for interacting with the STAR dialogue dataset.
@@ -53,7 +54,7 @@ class STAR:
         with open(os.path.join(STAR._path, f"tasks/{task_name}/{task_name}.json")) as reader:
             if not as_dot:
                 return json.load(reader)["graph"]
-            dot_edges = ";\n".join(f"    {a} -> {b}" for a,b in json.load(reader)["graph"].items())
+            dot_edges = ";\n".join(f"    {a} -> {b}" for a, b in json.load(reader)["graph"].items())
 
         return "digraph %s  {\n%s\n}" % (task_name, dot_edges)
 
@@ -71,7 +72,7 @@ class STAR:
         """
         with open(os.path.join(STAR._path, f"tasks/{task_name}/responses.json")) as reader:
             responses = json.load(reader)
-            responses = {key:re.sub(r"{(.+?)(?::\w+?)?}", lambda m:m.group(1).upper(), value)
+            responses = {key: re.sub(r"{(.+?)(?::\w+?)?}", lambda m: m.group(1).upper(), value)
                          for key, value in responses.items()
                          if key != "out_of_scope"}
             return responses if as_dict else json.dumps(responses, indent=2)
@@ -97,13 +98,13 @@ class STAR:
                 dialogId=id,
                 scenario=dialog["Scenario"],
                 turns=[Turn(speaker=e["Agent"], text=e["Text"])
-                    for e in dialog["Events"]
-                    if e["Action"] in ["utter", "pick_suggestion"]],
+                       for e in dialog["Events"]
+                       if e["Action"] in ["utter", "pick_suggestion"]],
                 events=[Event(agent=e["Agent"],
-                            action=e["Action"],
-                            actionLabel=e["ActionLabel"] if "ActionLabel" in e else None,
-                            text=e["Text"],
-                            timestamp=e["UnixTime"])
+                              action=e["Action"],
+                              actionLabel=e["ActionLabel"] if "ActionLabel" in e else None,
+                              text=e["Text"],
+                              timestamp=e["UnixTime"])
                         for e in dialog["Events"]
                         if "Text" in e]
             )
@@ -125,7 +126,7 @@ class STAR:
         :rtype: List[Dialog]
         """
         dialogs = []
-        for fname in tqdm(os.listdir(os.path.join(STAR._path, f"dialogues/")), desc="Reading dialogs", leave=False):
+        for fname in tqdm(os.listdir(os.path.join(STAR._path, "dialogues/")), desc="Reading dialogs", leave=False):
             if not fname.endswith(".json"):
                 continue
             dialog_id = int(os.path.splitext(fname)[0])
@@ -134,7 +135,8 @@ class STAR:
             if (domain is None or domain in scenario["Domains"]) and \
                (happy is None or scenario["Happy"] == happy) and \
                (multitask is None or scenario["MultiTask"] == multitask) and \
-               (task_name is None or any(capability["Task"] == task_name for capability in scenario["WizardCapabilities"])):
+               (task_name is None or any(capability["Task"] == task_name
+                                         for capability in scenario["WizardCapabilities"])):
                 dialogs.append(STAR.get_dialog(dialog_id))
         return dialogs
 
@@ -166,8 +168,8 @@ class STAR:
         with open(os.path.join(STAR._path, f"dialogues/{id}.json")) as reader:
             for event in json.load(reader)["Events"]:
                 turn_speaker = event["Agent"]
-                if speaker == None and turn_speaker in STAR._speakers:
-                        return Turn(speaker=turn_speaker, text=event["Text"])
+                if speaker is None and turn_speaker in STAR._speakers:
+                    return Turn(speaker=turn_speaker, text=event["Text"])
                 elif turn_speaker == speaker:
                     return Turn(speaker=turn_speaker, text=event["Text"])
 
@@ -408,7 +410,7 @@ The actual DOT for the current tasks are:
         return system, user
 
     @staticmethod
-    def get_agents_from_dialogue(id, model_name:str, set_first_utterance: bool = False):
+    def get_agents_from_dialogue(id, model_name: str, set_first_utterance: bool = False):
         """
         Constructs PersonaAgent objects for a dialogue, optionally setting the first utterance.
 
@@ -434,7 +436,7 @@ The actual DOT for the current tasks are:
         return system, user
 
     @staticmethod
-    def get_agents_from_dialogue_with_orchestration(id, model_name:str, set_first_utterance: bool = False):
+    def get_agents_from_dialogue_with_orchestration(id, model_name: str, set_first_utterance: bool = False):
         """
         Constructs PersonaAgent objects with orchestration for a dialogue.
 

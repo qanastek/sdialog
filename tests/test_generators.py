@@ -4,6 +4,7 @@ from sdialog.personas import Persona
 
 MODEL = "smollm:135m"
 
+
 # Patch LLM call
 class DummyLLM:
     seed = 0
@@ -28,6 +29,7 @@ def test_dialog_generator(monkeypatch):
     gen = DialogGenerator(MODEL, dialogue_details="test")
     dialog = gen()
     assert hasattr(dialog, "turns")
+
 
 def test_persona_dialog_generator(monkeypatch):
     monkeypatch.setattr("sdialog.generators.ChatOllama", DummyLLM)

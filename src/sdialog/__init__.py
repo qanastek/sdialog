@@ -2,8 +2,8 @@
 sdialog: Synthetic Dialogue Generation Toolkit
 
 This package provides utilities for generating synthetic dialogues using instruction-tuned large language models (LLMs).
-Dialogues are generated primarily via role-playing, where each agent is defined by a Persona object. The package supports
-dialogue orchestration, scenario management, and flexible serialization for downstream tasks.
+Dialogues are generated primarily via role-playing, where each agent is defined by a Persona object. The package
+supports dialogue orchestration, scenario management, and flexible serialization for downstream tasks.
 
 Main components:
 
@@ -56,9 +56,9 @@ class Event(BaseModel):
     :ivar timestamp: The Unix timestamp of the event.
     :vartype timestamp: int
     """
-    agent: Optional[str] = None # "user", "system"
+    agent: Optional[str] = None  # "user", "system"
     action: str  # "utter", "instruct"
-    actionLabel: Optional[str] = None # action label (e.g. type of instruct)
+    actionLabel: Optional[str] = None  # action label (e.g. type of instruct)
     text: str  # the content of the event
     timestamp: int  # timestemp
 
@@ -217,7 +217,7 @@ def _print_dialog(dialog: Union[Dialog, dict], scenario: bool = False, orchestra
     :param orchestration: If True, prints also orchestration events.
     :type orchestration: bool
     """
-    if type(dialog) == dict:
+    if type(dialog) is dict:
         dialog = Dialog.model_validate(dialog)
 
     speaker_tag_colors = ["red", "blue", "yellow", "cyan", "green", "magenta", "purple"]
@@ -234,7 +234,7 @@ def _print_dialog(dialog: Union[Dialog, dict], scenario: bool = False, orchestra
         print(dialog.seed, tag="seed", tag_color="purple", color="magenta", format="bold")
     if scenario and dialog.scenario:
         print("", tag="scenario", tag_color="purple", color="magenta", format="bold")
-        if type(dialog.scenario) == str:
+        if type(dialog.scenario) is str:
             print(dialog.scenario, color="magenta")
         else:
             print(json.dumps(dialog.scenario, indent=2), color="magenta")

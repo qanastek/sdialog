@@ -1,5 +1,6 @@
 from sdialog import Dialog, Turn, Event, Instruction
 
+
 def test_turn_and_event():
     turn = Turn(speaker="Alice", text="Hello!")
     assert turn.speaker == "Alice"
@@ -11,6 +12,7 @@ def test_turn_and_event():
     assert event.text == "Hi"
     assert event.timestamp == 123
 
+
 def test_dialog_serialization_and_str():
     turns = [Turn(speaker="A", text="Hi"), Turn(speaker="B", text="Hello")]
     dialog = Dialog(turns=turns)
@@ -19,6 +21,7 @@ def test_dialog_serialization_and_str():
     assert "turns" in json_obj
     assert dialog.description().startswith("A: Hi")
     assert str(dialog) == dialog.description()
+
 
 def test_dialog_to_file_and_from_file(tmp_path):
     turns = [Turn(speaker="A", text="Hi"), Turn(speaker="B", text="Hello")]
@@ -37,11 +40,13 @@ def test_dialog_to_file_and_from_file(tmp_path):
     assert loaded_json.turns[0].speaker == "A"
     assert loaded_txt.turns[1].text == "Hello"
 
+
 def test_instruction_event():
     event = Event(agent="user", action="instruct", text="Do this", timestamp=1)
     instr = Instruction(text="Do this", events=event)
     assert instr.text == "Do this"
     assert instr.events == event
+
 
 def test_dialog_print(capsys):
     turns = [Turn(speaker="A", text="Hi"), Turn(speaker="B", text="Hello")]

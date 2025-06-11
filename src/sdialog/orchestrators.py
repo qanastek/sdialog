@@ -14,7 +14,7 @@ import numpy as np
 
 from time import time
 from abc import ABC, abstractmethod
-from typing import List, Union, Dict, Optional
+from typing import List, Union, Dict
 from sentence_transformers import SentenceTransformer
 from langchain_core.messages import SystemMessage, AIMessage
 
@@ -44,14 +44,16 @@ class BaseOrchestrator(ABC):
     _event_label = None
     _persistent = False
 
-    def __init__(self, target_agent = None, persistent: bool = None, event_label: str = None):
+    def __init__(self, target_agent=None, persistent: bool = None, event_label: str = None):
         self._target = target_agent
         self._persistent = persistent
         self._event_label = event_label
 
     def __call__(self):
         dialog = self.__get_current_dialog()
-        return self.instruct(dialog, dialog[-1].text if dialog and dialog[-1].speaker != self._target.get_name() else "")
+        return self.instruct(dialog, dialog[-1].text
+                             if dialog and dialog[-1].speaker != self._target.get_name()
+                             else "")
 
     def __str__(self) -> str:
         data = self.json()
@@ -59,13 +61,13 @@ class BaseOrchestrator(ABC):
         return f"{data['name']}({attrs})"
 
     def __get_current_dialog(self) -> List[Turn]:
-        return [Turn(speaker=self._target.get_name() if type(message) == AIMessage else None, text=message.content)
-                for message in self._target.memory if type(message) != SystemMessage]
+        return [Turn(speaker=self._target.get_name() if type(message) is AIMessage else None, text=message.content)
+                for message in self._target.memory if type(message) is not SystemMessage]
 
     def _set_target_agent(self, agent):  # target: PersonaAgent
         self._target = agent
 
-    def json(self, string: bool = False, indent: int =None):
+    def json(self, string: bool = False, indent: int = None):
         sig = inspect.signature(self.__init__)
         data = {"name": type(self).__name__,
                 "args": {key: self.__dict__[key] for key in sig.parameters
@@ -183,7 +185,7 @@ class ChangeMindOrchestrator(BaseOrchestrator):
                  event_label: str = None):
         super().__init__(persistent=persistent, event_label=event_label)
         self.probability = probability
-        self.reasons = [reasons] if type(reasons) == str else reasons
+        self.reasons = [reasons] if type(reasons) is str else reasons
         self.max_times = max_times
         self.times = 0
 
@@ -219,7 +221,7 @@ class SimpleResponseOrchestrator(BaseOrchestrator):
     def __init__(self,
                  responses: List[Union[str, Dict[str, str]]],
                  graph: Dict[str, str] = None,
-                #  sbert_model: str = "sentence-transformers/LaBSE",
+                 #  sbert_model: str = "sentence-transformers/LaBSE",
                  sbert_model: str = "sergioburdisso/dialog2flow-joint-bert-base",
                  top_k: int = 5):
 
@@ -227,7 +229,7 @@ class SimpleResponseOrchestrator(BaseOrchestrator):
         self.responses = responses
         self.top_k = top_k
 
-        if type(responses) == dict:
+        if type(responses) is dict:
             self.resp_utts = np.array([resp for resp in responses.values()])
             self.resp_acts = np.array([act for act in responses.keys()])
             self.graph = graph
@@ -253,7 +255,9 @@ class SimpleResponseOrchestrator(BaseOrchestrator):
         events = [Event(agent=agent.get_name(),
                         action="request_suggestions",
                         actionLabel=self.get_event_label(),
-                        text=f'Previous response: "{response}"' if agent_last_turn else f'Lookahead response: "{response}"',
+                        text=f'Previous response: "{response}"'
+                             if agent_last_turn
+                             else f'Lookahead response: "{response}"',
                         timestamp=int(time()))]
 
         sims = self.sent_encoder.similarity(self.sent_encoder.encode(response), self.resp_utt_embs)[0]
@@ -265,23 +269,26 @@ class SimpleResponseOrchestrator(BaseOrchestrator):
         else:
             next_actions = self.resp_acts[top_k_ixs].tolist()
             events.append(Event(agent=agent.get_name(),
-                            action="request_suggestions",
-                            actionLabel=self.get_event_label(),
-                            text="Actions for the response: "+ ", ".join(action for action in next_actions),
-                            timestamp=int(time())))
+                                action="request_suggestions",
+                                actionLabel=self.get_event_label(),
+                                text="Actions for the response: " + ", ".join(action for action in next_actions),
+                                timestamp=int(time())))
             if agent_last_turn:
                 next_actions = [self.graph[action] if action in self.graph else action
                                 for action in next_actions]
                 events.append(Event(agent=agent.get_name(),
-                            action="request_suggestions",
-                            actionLabel=self.get_event_label(),
-                            text="Graph next actions: " + ", ".join(action for action in next_actions),
-                            timestamp=int(time())))
+                                    action="request_suggestions",
+                                    actionLabel=self.get_event_label(),
+                                    text="Graph next actions: " + ", ".join(action for action in next_actions),
+                                    timestamp=int(time())))
 
             # TODO: remove repeated actions! (make it a set()?)
             next_actions = [action for action in next_actions if action in self.responses]
-            instruction = ("If applicable, pick your next response from the following action list in order of importance: " + 
-                           "; ".join(f'({ix + 1}) Action: {action}. Response: "{self.responses[action]}"' for ix, action in enumerate(next_actions)))
+            instruction = (
+                "If applicable, pick your next response from the following action list in order of importance: " +
+                "; ".join(f'({ix + 1}) Action: {action}. Response: "{self.responses[action]}"'
+                          for ix, action in enumerate(next_actions))
+            )
 
         return Instruction(text=instruction, events=events)
 
@@ -310,6 +317,6 @@ class InstructionListOrchestrator(BaseOrchestrator):
         else:
             current_user_len = 0
 
-        if (type(self.instructions) == dict and current_user_len in self.instructions) or \
-           (type(self.instructions) == list and current_user_len < len(self.instructions)):
+        if (type(self.instructions) is dict and current_user_len in self.instructions) or \
+           (type(self.instructions) is list and current_user_len < len(self.instructions)):
             return self.instructions[current_user_len]
