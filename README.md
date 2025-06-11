@@ -1,4 +1,5 @@
-# SDialog
+<img src="https://raw.githubusercontent.com/idiap/sdialog/refs/heads/main/docs/_static/logo-banner.png" alt="SDialog Logo" title="SDialog" height="150" />
+
 [![Documentation Status](https://app.readthedocs.org/projects/sdialog/badge/?version=latest)](https://sdialog.readthedocs.io)
 [![CI](https://img.shields.io/github/actions/workflow/status/idiap/sdialog/ci.yml?label=CI)](https://github.com/idiap/sdialog/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/idiap/sdialog/graph/badge.svg?token=2210USI8I0)](https://app.codecov.io/gh/idiap/sdialog?displayType=list)
@@ -7,6 +8,8 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/idiap/sdialog/master?filepath=tutorials)
 <!-- [![Build Status](https://api.travis-ci.com/sergioburdisso/sdialog.svg?branch=master)](https://app.travis-ci.com/github/idiap/sdialog) -->
 <!-- [![codecov](https://codecov.io/gh/idiap/sdialog/branch/master/graph/badge.svg)](https://codecov.io/gh/idiap/sdialog) -->
+
+---
 
 **SDialog** is a modular, extensible Python toolkit for synthetic dialogue generation and analysis, designed for research and development with instruction-tuned Large Language Models (LLMs). It enables flexible, persona-driven, multi-agent dialogue simulation, orchestration, and scenario management, making it ideal for building, evaluating, and experimenting with conversational agents.
 

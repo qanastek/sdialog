@@ -1,3 +1,8 @@
+.. image:: _static/logo-banner.png
+    :target: https://github.com/idiap/sdialog
+    :height: 100px
+    :align: right
+
 Synthetic Dialogue Generation with SDialog
 ==========================================
 
