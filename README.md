@@ -1,5 +1,6 @@
 # SDialog
 [![Documentation Status](https://app.readthedocs.org/projects/sdialog/badge/?version=latest)](https://sdialog.readthedocs.io)
+[![CI](https://github.com/idiap/sdialog/actions/workflows/ci.yml/badge.svg)](https://github.com/idiap/sdialog/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/sdialog.svg)](https://badge.fury.io/py/sdialog)
 [![Downloads](https://static.pepy.tech/badge/sdialog)](https://pepy.tech/project/sdialog)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/idiap/sdialog/master?filepath=tutorials)
