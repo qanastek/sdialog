@@ -160,12 +160,12 @@ class PersonaAgent:
 
         if not system_prompt:
             if can_finish:
-                conversation_end_instructions = "To finish the conversation you first have to say good bye and " \
-                                                 f"immediately after you **MUST** output '{self.STOP_WORD}' to " \
-                                                 "indicate it is the end of it."
+                conversation_end_instructions = ("To finish the conversation you first have to say good bye and "
+                                                 f"immediately after you **MUST** output '{self.STOP_WORD}' to "
+                                                 "indicate it is the end of it.")
             else:
-                conversation_end_instructions = "When the user finish the conversation you should say good bye and " \
-                                                "also finish the conversation"
+                conversation_end_instructions = ("When the user finish the conversation you should say good bye and "
+                                                 "also finish the conversation")
 
             # system_prompt = prompt_template.format(role=role, ...)
             system_prompt = f"""Role play as a character that is described by the persona defined in the following lines. You always stay in character.
@@ -240,9 +240,8 @@ Finally, remember:
                                             timestamp=int(time())))
 
         if len(self.memory) <= 1 and self.first_utterances:
-            response = random.choice(self.first_utterances) \
-                       if type(self.first_utterances) is list \
-                       else self.first_utterances
+            response = (random.choice(self.first_utterances) if type(self.first_utterances) is list
+                        else self.first_utterances)
             response = AIMessage(content=response)
         else:
             response = self.llm.invoke(self.memory)

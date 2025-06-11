@@ -264,8 +264,8 @@ class SimpleResponseOrchestrator(BaseOrchestrator):
         top_k_ixs = sims.argsort(descending=True)[:self.top_k]
 
         if self.resp_acts is None:
-            instruction = ("If applicable, try to pick your next response from the following list: " +
-                           "; ".join(f'({ix + 1}) {resp}' for ix, resp in enumerate(self.resp_utts[top_k_ixs])))
+            instruction = ("If applicable, try to pick your next response from the following list: "
+                           + "; ".join(f'({ix + 1}) {resp}' for ix, resp in enumerate(self.resp_utts[top_k_ixs])))
         else:
             next_actions = self.resp_acts[top_k_ixs].tolist()
             events.append(Event(agent=agent.get_name(),
@@ -285,9 +285,9 @@ class SimpleResponseOrchestrator(BaseOrchestrator):
             # TODO: remove repeated actions! (make it a set()?)
             next_actions = [action for action in next_actions if action in self.responses]
             instruction = (
-                "If applicable, pick your next response from the following action list in order of importance: " +
-                "; ".join(f'({ix + 1}) Action: {action}. Response: "{self.responses[action]}"'
-                          for ix, action in enumerate(next_actions))
+                "If applicable, pick your next response from the following action list in order of importance: "
+                + "; ".join(f'({ix + 1}) Action: {action}. Response: "{self.responses[action]}"'
+                            for ix, action in enumerate(next_actions))
             )
 
         return Instruction(text=instruction, events=events)

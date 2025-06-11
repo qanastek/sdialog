@@ -95,19 +95,19 @@ class STAR:
                 e["Agent"] = "System"
 
         return Dialog(
-                dialogId=id,
-                scenario=dialog["Scenario"],
-                turns=[Turn(speaker=e["Agent"], text=e["Text"])
-                       for e in dialog["Events"]
-                       if e["Action"] in ["utter", "pick_suggestion"]],
-                events=[Event(agent=e["Agent"],
-                              action=e["Action"],
-                              actionLabel=e["ActionLabel"] if "ActionLabel" in e else None,
-                              text=e["Text"],
-                              timestamp=e["UnixTime"])
-                        for e in dialog["Events"]
-                        if "Text" in e]
-            )
+            dialogId=id,
+            scenario=dialog["Scenario"],
+            turns=[Turn(speaker=e["Agent"], text=e["Text"])
+                   for e in dialog["Events"]
+                   if e["Action"] in ["utter", "pick_suggestion"]],
+            events=[Event(agent=e["Agent"],
+                          action=e["Action"],
+                          actionLabel=e["ActionLabel"] if "ActionLabel" in e else None,
+                          text=e["Text"],
+                          timestamp=e["UnixTime"])
+                    for e in dialog["Events"]
+                    if "Text" in e]
+        )
 
     @staticmethod
     def get_dialogs(domain: str = None, task_name: str = None, happy: bool = None, multitask: bool = None):

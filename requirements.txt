@@ -7,3 +7,5 @@ langchain-huggingface
 numpy
 sentence-transformers
 ollama
+pytest
+flake8
