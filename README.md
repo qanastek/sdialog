@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/idiap/sdialog/refs/heads/main/docs/_static/logo-banner.png" alt="SDialog Logo" title="SDialog" height="150" />
+<img src="https://raw.githubusercontent.com/idiap/sdialog/master/docs/_static/logo-banner.png" alt="SDialog Logo" title="SDialog" height="150" />
 
 [![Documentation Status](https://app.readthedocs.org/projects/sdialog/badge/?version=latest)](https://sdialog.readthedocs.io)
 [![CI](https://img.shields.io/github/actions/workflow/status/idiap/sdialog/ci.yml?label=CI)](https://github.com/idiap/sdialog/actions/workflows/ci.yml)
