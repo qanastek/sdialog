@@ -9,7 +9,7 @@ objects can be safely converted to JSON for storage or transmission.
 # SPDX-License-Identifier: MIT
 import json
 
-def make_serializable(data:dict):
+def make_serializable(data:dict) -> dict:
     """
     Converts non-serializable values in a dictionary to strings so the dictionary can be safely serialized to JSON.
 
@@ -18,6 +18,9 @@ def make_serializable(data:dict):
     :return: The dictionary with all values JSON-serializable.
     :rtype: dict
     """
+
+    if type(data) is not dict:
+        raise TypeError("Input must be a dictionary")
 
     for key, value in data.items():
         try:

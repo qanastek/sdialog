@@ -460,7 +460,10 @@ Finally, remember:
             events.extend(utt_events)
 
         if not keep_bar:
-            tqdm_iterator.container.close()
+            try:
+                tqdm_iterator.container.close()
+            except AttributeError:
+                pass
 
         if self.scenario:
             scenario = self.scenario

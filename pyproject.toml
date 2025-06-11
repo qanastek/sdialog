@@ -31,6 +31,12 @@ dynamic = ["version", "dependencies"]
 version = {attr = "sdialog.__version__"}
 dependencies = {file = ["requirements.txt"]}
 
+[tool.pytest.ini_options]
+pythonpath = "src/"
+addopts = [
+    "--import-mode=importlib",
+]
+
 [project.urls]
 Homepage = "https://sdialog.readthedocs.io"
 Issues = "https://github.com/idiap/sdialog/issues"
@@ -38,4 +44,4 @@ Source = "https://github.com/idiap/sdialog"
 Documentation = "https://sdialog.readthedocs.io"
 
 [flake8]
-max-line-length=120
+max-line-length = 120
