@@ -8,4 +8,6 @@ numpy
 sentence-transformers
 ollama
 pytest
+pytest-cov
+codecov
 flake8

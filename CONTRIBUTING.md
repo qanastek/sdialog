@@ -39,3 +39,9 @@ Make sure your changes passes the style and unit tests, run the following comman
 flake8 --ignore=E501,W503
 pytest
 ```
+
+Or if you want to check the code coverture:
+```bash
+pytest -v --cov-report=html --cov=src/sdialog
+```
+And check the content of the newlly created `htmlcov` folder (open `index.html`).
