@@ -24,6 +24,13 @@ sphinx-apidoc -f --ext-autodoc -o . ../../src/sdialog
 
 Link to our ReadTheDocs [here](https://app.readthedocs.org/projects/sdialog/builds/28462329/).
 
+## PyPI
+
+```bash
+python -m build
+python -m twine upload dist/*
+```
+
 ## Tests
 
 Make sure your changes passes the style and unit tests, run the following commands in the root directory:
