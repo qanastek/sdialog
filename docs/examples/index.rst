@@ -65,11 +65,10 @@ This example demonstrates how to use SDialog's STAR dataset utilities. You can s
     dialog = STAR.get_dialog(123)
     dialog.print(scenario=True)
 
-    # Get scenario description and flowcharts
-    scenario, description = STAR.get_dialog_scenario_description(123)
-    print(description)
+    # Get scenario for a given dialogue ID (123 in this case)
+    scenario  = STAR.get_dialog_scenario(123)
 
-    # Get agents for a scenario
+    # Get agents for a given scenario
     system_agent, user_agent = STAR.get_agents_for_scenario(scenario, "llama2")
 
 Exporting and Loading Dialogues
