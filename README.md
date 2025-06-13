@@ -83,8 +83,20 @@ Work with the STAR dataset for scenario-driven dialogue generation:
 from sdialog.datasets import STAR
 
 STAR.set_path("/path/to/star-dataset")
-dialog = STAR.get_dialog(123)
-dialog.print(scenario=True)
+
+scenario = {
+    "Domains": ["banking"],
+    "UserTask": "Open a new account",
+    "WizardTask": "Assist with account opening",
+    "Happy": True,
+    "MultiTask": False,
+    "WizardCapabilities": [{"Task": "open_account", "Domain": "banking"}]
+}
+
+system_agent, user_agent = STAR.get_agents_for_scenario(scenario, "llama2")
+
+dialog = system_agent.dialog_with(user_agent)
+dialog.print()
 ```
 
 ## 📖 Documentation
