@@ -5,10 +5,7 @@
 [![codecov](https://codecov.io/gh/idiap/sdialog/graph/badge.svg?token=2210USI8I0)](https://app.codecov.io/gh/idiap/sdialog?displayType=list)
 [![PyPI version](https://badge.fury.io/py/sdialog.svg)](https://badge.fury.io/py/sdialog)
 [![Downloads](https://static.pepy.tech/badge/sdialog)](https://pepy.tech/project/sdialog)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/idiap/sdialog/master?filepath=tutorials)
-<!-- [![Build Status](https://api.travis-ci.com/sergioburdisso/sdialog.svg?branch=master)](https://app.travis-ci.com/github/idiap/sdialog) -->
-<!-- [![codecov](https://codecov.io/gh/idiap/sdialog/branch/master/graph/badge.svg)](https://codecov.io/gh/idiap/sdialog) -->
-
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/idiap/sdialog/)
 ---
 
 **SDialog** is a modular, extensible Python toolkit for synthetic dialogue generation and analysis, designed for research and development with instruction-tuned Large Language Models (LLMs). It enables flexible, persona-driven, multi-agent dialogue simulation, orchestration, and scenario management, making it ideal for building, evaluating, and experimenting with conversational agents.
@@ -98,6 +95,10 @@ system_agent, user_agent = STAR.get_agents_for_scenario(scenario, "llama2")
 dialog = system_agent.dialog_with(user_agent)
 dialog.print()
 ```
+
+## 📄 Description
+
+SDialog is a Python toolkit for synthetic dialogue generation and analysis, designed for research and development with instruction-tuned Large Language Models (LLMs). It provides abstractions for persona-driven, multi-agent dialogue simulation, orchestration for fine-grained control, and scenario management. SDialog enables users to easily define agent personas, simulate realistic conversations, inject dynamic instructions, and manage complex scenarios or datasets (such as STAR). The toolkit supports integration with LLMs via Ollama and LangChain, and offers flexible serialization, export, and analysis utilities for generated dialogues.
 
 ## 📖 Documentation
 

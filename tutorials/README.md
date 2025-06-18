@@ -1,5 +1,5 @@
 # Sdialog Tutorials :sunglasses:
-:point_right: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/Play-Your-Part/tutorials/)
+:point_right: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/idiap/sdialog/)
 
 
 > _(the content of this folder is a modified version of the tutorials prepared for JSALT 2025 available [here](https://github.com/Play-Your-Part/tutorials))_
