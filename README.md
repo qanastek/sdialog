@@ -96,10 +96,6 @@ dialog = system_agent.dialog_with(user_agent)
 dialog.print()
 ```
 
-## 📄 Description
-
-SDialog is a Python toolkit for synthetic dialogue generation and analysis, designed for research and development with instruction-tuned Large Language Models (LLMs). It provides abstractions for persona-driven, multi-agent dialogue simulation, orchestration for fine-grained control, and scenario management. SDialog enables users to easily define agent personas, simulate realistic conversations, inject dynamic instructions, and manage complex scenarios or datasets (such as STAR). The toolkit supports integration with LLMs via Ollama and LangChain, and offers flexible serialization, export, and analysis utilities for generated dialogues.
-
 ## 📖 Documentation
 
 - **[Documentation](https://sdialog.readthedocs.io)** - Full package documentation, including installation, API reference, usage guides, and advanced examples available.
