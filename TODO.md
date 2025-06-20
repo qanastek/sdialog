@@ -5,6 +5,8 @@
 - [x] Improve README and add usage guides
 - [x] Generate API documentation
 - [x] Add initial unit tests
+- [ ] Add library version used as part of the Dialog metadata.
+- [ ] Move default now hard-coded prompts to config files that support prompt template definition with optional fields as in Ollama templates (e.g. [here](https://ollama.com/library/deepseek-r1:latest/blobs/c5ad996bda6e))
 - [ ] Integrate with LangChain’s `ChatHuggingFace` for more LLM options
 - [ ] Enable exporting raw LLM messages and internal memory states
 - [ ] As with `Persona`, define a `BaseScenario` and a `Scenario` classes
