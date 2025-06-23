@@ -1,5 +1,5 @@
 from sdialog.generators import DialogGenerator, PersonaDialogGenerator, LLMDialogOutput, Turn
-from sdialog.personas import Persona
+from sdialog.personas import Persona, PersonaAgent
 
 
 MODEL = "smollm:135m"
@@ -35,6 +35,15 @@ def test_persona_dialog_generator(monkeypatch):
     monkeypatch.setattr("sdialog.generators.ChatOllama", DummyLLM)
     persona_a = Persona(name="A")
     persona_b = Persona(name="B")
+    gen = PersonaDialogGenerator(MODEL, persona_a, persona_b)
+    dialog = gen()
+    assert hasattr(dialog, "turns")
+
+
+def test_persona_dialog_generator_with_agents(monkeypatch):
+    monkeypatch.setattr("sdialog.generators.ChatOllama", DummyLLM)
+    persona_a = PersonaAgent(DummyLLM(), name="A")
+    persona_b = PersonaAgent(DummyLLM(), name="B")
     gen = PersonaDialogGenerator(MODEL, persona_a, persona_b)
     dialog = gen()
     assert hasattr(dialog, "turns")

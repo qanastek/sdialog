@@ -17,7 +17,7 @@ from langchain_ollama.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from . import Dialog, Turn
-from .personas import Persona
+from .personas import Persona, PersonaAgent
 
 
 class LLMDialogOutput(BaseModel):
@@ -152,10 +152,13 @@ class PersonaDialogGenerator(DialogGenerator):
     :ivar persona_b: The second persona.
     :vartype persona_b: Persona
     """
+    _agent_a = None
+    _agent_b = None
+
     def __init__(self,
                  model: Union[ChatOllama, str],
-                 persona_a: Persona,
-                 persona_b: Persona,
+                 persona_a: Union[Persona, PersonaAgent],
+                 persona_b: Union[Persona, PersonaAgent],
                  dialogue_details: str = "",
                  response_details: str = "responses SHOULD NOT be too long and wordy, should be "
                                          "approximately one utterance long",
@@ -166,9 +169,9 @@ class PersonaDialogGenerator(DialogGenerator):
         :param model: The LLM or model name to use.
         :type model: Union[ChatOllama, str]
         :param persona_a: The first persona.
-        :type persona_a: Persona
+        :type persona_a: Persona (or PersonaAgent)
         :param persona_b: The second persona.
-        :type persona_b: Persona
+        :type persona_b: Persona (or PersonaAgent)
         :param dialogue_details: Additional dialogue instructions.
         :type dialogue_details: str
         :param response_details: Instructions for response style.
@@ -176,6 +179,10 @@ class PersonaDialogGenerator(DialogGenerator):
         :param scenario: Scenario metadata.
         :type scenario: dict
         """
+
+        if isinstance(persona_a, PersonaAgent) and isinstance(persona_b, PersonaAgent):
+            self._agent_a = persona_a
+            self._agent_b = persona_b
 
         dialogue_details = f"""Role play as the following two characters having a conversations. The characters are defined by the personas in the following lines. You always stay in character.
 [[ ## BEGING FIRST PERSONA ## ]]
@@ -194,3 +201,12 @@ Finally, remember:
         super().__init__(model=model,
                          dialogue_details=dialogue_details,
                          scenario=scenario)
+
+    def generate(self, seed: int = None, id: int = None, max_iterations: int = 20):
+        if self._agent_a and self._agent_b:
+            return self._agent_a.dialog_with(self._agent_b,
+                                             max_iterations=max_iterations,
+                                             id=id,
+                                             seed=seed)
+        else:
+            return super().generate(seed=seed, id=id)
