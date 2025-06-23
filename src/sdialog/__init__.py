@@ -19,11 +19,10 @@ import os
 import json
 
 from pydantic import BaseModel
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Any
 from print_color import print
 
 from .util import make_serializable
-
 
 __version__ = "0.0.2"
 
@@ -89,6 +88,7 @@ class Dialog(BaseModel):
     seed: Optional[int] = None  # the seed used to generated
     dialogId: Optional[int] = None
     complete: Optional[bool] = None
+    personas: Optional[dict[str, dict[str, Any]]] = None  # personas used in the dialogue
     scenario: Optional[Union[dict, str]] = None  # the scenario used to generated the dialogue
     turns: List[Turn]  # the list of turns of the conversation
     events: Optional[List[Event]] = None
