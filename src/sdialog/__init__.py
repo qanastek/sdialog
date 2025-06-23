@@ -84,7 +84,7 @@ class Dialog(BaseModel):
     :ivar events: List of dialogue events (optional).
     :vartype events: Optional[List[Event]]
     """
-    formatVersion: Optional[str] = "0.0.5"  # Version of the format
+    formatVersion: Optional[str] = __version__  # Version of the format
     model: Optional[str] = None  # the model used to generate the dialogue
     seed: Optional[int] = None  # the seed used to generated
     dialogId: Optional[int] = None
