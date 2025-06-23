@@ -299,7 +299,7 @@ Finally, the following should be considered regarding the conversation:
    2. {"The user is calling to perform multiple tasks, involving all the tasks defined as flowcharts above (" + ', '.join(task['Task'] for task in scenario['WizardCapabilities']) + ")"
         if scenario['MultiTask'] else
         "The user is calling to perform only the defined task (" + scenario['WizardCapabilities'][0]['Task'] + "), nothing else"}.
-"""
+"""  # noqa: E501
 
     @staticmethod
     def get_dialog_scenario_description(id):
@@ -332,10 +332,11 @@ The following should be considered regarding the conversation:
        "perhaps you changed your mind at some point or something external happend in the environment for the conversation to not flow as expected"}.
    2. {"The conversation involves multiple tasks, that is, you want the assistant to perform multiple tasks (" + ', '.join(task['Task'] for task in scenario['WizardCapabilities']) + "), not just one."
         if scenario['MultiTask'] else
-        "The conversation involves only one task you were instructed to (" + scenario['WizardCapabilities'][0]['Task'] + "), nothing else"}"""
+        "The conversation involves only one task you were instructed to (" + scenario['WizardCapabilities'][0]['Task'] + "), nothing else"}"""  # noqa: E501
 
         return Persona(
-            role=f"user calling a AI assistant that can perform multiple tasks in the following domains: {', '.join(scenario['Domains'])}.\n" + dialogue_details,
+            role="user calling a AI assistant that can perform multiple tasks in the following domains: "
+                 f"{', '.join(scenario['Domains'])}.\n" + dialogue_details,
             circumstances=scenario["UserTask"],
         )
 
@@ -364,7 +365,7 @@ Response example for each action is provided in the following json:
 {STAR.read_graph_responses(task_name)}
 ```
 where UPPERCASE words above are just example placeholders. You MUST fill in those with any coherent values in the actual conversation.
-"""
+"""  # noqa: E501
         return flowcharts
 
     @staticmethod
@@ -380,7 +381,7 @@ where UPPERCASE words above are just example placeholders. You MUST fill in thos
         dialogue_details = f"""In the conversation, the AI assistant is instructed to follow specific action flowcharts to address the tasks. Flowcharts are defined as graph described using DOT.
 The actual DOT for the current tasks are:
 {STAR.get_flowchart_description_for_scenario(scenario)}
-"""
+"""  # noqa: E501
         return Persona(
             role="AI assistant.\n" + dialogue_details,
             circumstances=scenario['WizardTask'],

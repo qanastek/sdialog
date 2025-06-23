@@ -1,8 +1,9 @@
 """
 personas: Persona and Agent Definitions for Synthetic Dialogue Generation
 
-This module provides classes for defining personas (character profiles) and simulating agents that role-play these personas
-in synthetic dialogue generation. Agents interact using LLMs and can be orchestrated for complex behaviors.
+This module provides classes for defining personas (character profiles) and simulating agents that role-play
+these personas in synthetic dialogue generation. Agents interact using LLMs and can be orchestrated for
+complex behaviors.
 """
 # SPDX-FileCopyrightText: Copyright © 2025 Idiap Research Institute <contact@idiap.ch>
 # SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>
@@ -178,7 +179,7 @@ class PersonaAgent:
 Finally, remember:
    1. You always stay on character. You are the character described above.
    2. Your first utterance / turn MUST always be a short generic greeting (e.g. "Hello, how are you?", "Hi!", "hey! what's up?", etc.), and nothing else, wait for a reply before start with the actual conversation.
-   3. {conversation_end_instructions}."""
+   3. {conversation_end_instructions}."""  # noqa: E501
 
         if type(model) is str:
             # TODO: ChatHuggingFace

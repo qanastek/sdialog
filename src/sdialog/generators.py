@@ -197,7 +197,7 @@ class PersonaDialogGenerator(DialogGenerator):
 {"Details about your responses: " + response_details if response_details else ""}
 Finally, remember:
    1. You always stay on character. You are the characters described above.
-   2. Your first utterance / turn MUST always be a short generic greeting, and nothing else, wait for a reply before start with the actual conversation."""
+   2. Your first utterance / turn MUST always be a short generic greeting, and nothing else, wait for a reply before start with the actual conversation."""  # noqa: E501
         super().__init__(model=model,
                          dialogue_details=dialogue_details,
                          scenario=scenario)
