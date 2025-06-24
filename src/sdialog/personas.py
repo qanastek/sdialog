@@ -1,8 +1,9 @@
 """
 personas: Persona and Agent Definitions for Synthetic Dialogue Generation
 
-This module provides classes for defining personas (character profiles) and simulating agents that role-play these personas
-in synthetic dialogue generation. Agents interact using LLMs and can be orchestrated for complex behaviors.
+This module provides classes for defining personas (character profiles) and simulating agents that role-play
+these personas in synthetic dialogue generation. Agents interact using LLMs and can be orchestrated for
+complex behaviors.
 """
 # SPDX-FileCopyrightText: Copyright © 2025 Idiap Research Institute <contact@idiap.ch>
 # SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>, Séverin Baroudi <severin.baroudi@lis-lab.fr>
