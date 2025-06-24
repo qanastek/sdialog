@@ -203,7 +203,28 @@ class Dialog(BaseModel):
                                   text=line[line.index(":") + 1:].strip())
                              for line in lines if line])
 
-    # TODO: add from_dict as an alias of (so we don't have to use .model_validate())
+    @staticmethod
+    def from_dict(data: dict):
+        """
+        Creates a Dialog object from a dictionary.
+
+        :param data: The dictionary containing dialogue data.
+        :type data: dict
+        :return: The created Dialog object.
+        :rtype: Dialog
+        """
+        return Dialog.model_validate(data)
+
+    def from_json(self, json_str: str):
+        """
+        Creates a Dialog object from a JSON string.
+
+        :param json_str: The JSON string containing dialogue data.
+        :type json_str: str
+        :return: The created Dialog object.
+        :rtype: Dialog
+        """
+        return Dialog.from_dict(json.loads(json_str))
 
     __str__ = description
 
