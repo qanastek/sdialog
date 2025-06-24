@@ -19,9 +19,18 @@ from sdialog import Dialog
 pipeline = KPipeline(lang_code='a')
 
 
-def generate_utterance(text: str, persona: dict, voice: str = "af_heart") -> None:
+def generate_utterance(text: str, persona: dict, voice: str = "af_heart") -> np.ndarray:
     """
     Generates an audio recording of a text utterance based on the speaker persona.
+
+    :param text: The text to be converted to audio.
+    :type text: str
+    :param persona: The speaker persona containing voice characteristics.
+    :type persona: dict
+    :param voice: The voice identifier to use for the audio generation.
+    :type voice: str
+    :return: A numpy array representing the audio of the utterance.
+    :rtype: np.ndarray
     """
 
     generator = pipeline(text, voice=voice)
@@ -31,12 +40,11 @@ def generate_utterance(text: str, persona: dict, voice: str = "af_heart") -> Non
     return audio
 
 
-def master_audio(dialogue_audios: list) -> None:
+def master_audio(dialogue_audios: list) -> np.ndarray:
     """
     Combines multiple audio segments into a single master audio track.
     """
-    master_audio = np.concatenate(dialogue_audios)
-    return master_audio
+    return np.concatenate(dialogue_audios)
 
 
 def to_wav(audio, output_file, sampling_rate=24000) -> None:
@@ -46,7 +54,15 @@ def to_wav(audio, output_file, sampling_rate=24000) -> None:
     sf.write(output_file, audio, sampling_rate)
 
 
-def generate_audios(dialog: Dialog):
+def generate_audios(dialog: Dialog) -> list:
+    """
+    Generates audio for each utterance in a Dialog object.
+
+    :param dialog: The Dialog object containing the conversation.
+    :type dialog: Dialog
+    :return: A list of numpy arrays, each representing the audio of an utterance.
+    :rtype: list
+    """
 
     dialogue_audios = []
 
@@ -58,7 +74,15 @@ def generate_audios(dialog: Dialog):
     return dialogue_audios
 
 
-def dialog_to_audio(dialog: Dialog):
+def dialog_to_audio(dialog: Dialog) -> np.ndarray:
+    """
+    Converts a Dialog object into a single audio track by generating audio for each utterance.
+
+    :param dialog: The Dialog object containing the conversation.
+    :type dialog: Dialog
+    :return: A numpy array representing the combined audio of the dialog.
+    :rtype: np.ndarray
+    """
 
     dialogue_audios = generate_audios(dialog)
 
