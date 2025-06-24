@@ -5,11 +5,23 @@
   "imageSize": 100,
   "commit": false,
   "contributors": [
+    {
+      "login": "qanastek",
+      "name": "Labrak Yanis",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19389475?v=4",
+      "profile": "http://linkedin.com/in/yanis-labrak-8a7412145/",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    }
   ],
   "contributorsPerLine": 7,
   "projectName": "sdialog",
   "projectOwner": "idiap",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs",
+  "commitConvention": "angular"
 }
