@@ -1,19 +1,20 @@
 """
 personas: Persona and Agent Definitions for Synthetic Dialogue Generation
 
-This module provides classes for defining personas (character profiles) and simulating agents that role-play
-these personas in synthetic dialogue generation. Agents interact using LLMs and can be orchestrated for
-complex behaviors.
+This module provides classes for defining personas (character profiles) and simulating agents that role-play these personas
+in synthetic dialogue generation. Agents interact using LLMs and can be orchestrated for complex behaviors.
 """
 # SPDX-FileCopyrightText: Copyright © 2025 Idiap Research Institute <contact@idiap.ch>
 # SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>
 # SPDX-License-Identifier: MIT
 import json
 import random
-
+import torch
+import transformers
+from langchain_huggingface import ChatHuggingFace, HuggingFacePipeline
 from time import time
 from tqdm.auto import trange
-
+import re
 from typing import List, Union
 from langchain_ollama.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
@@ -127,6 +128,7 @@ class PersonaAgent:
 
     def __init__(self,
                  model: Union[str, ChatOllama],
+                 hf_model: bool = False,
                  persona: BasePersona = Persona(),
                  name: str = None,
                  dialogue_details: str = "",
@@ -179,16 +181,39 @@ class PersonaAgent:
 Finally, remember:
    1. You always stay on character. You are the character described above.
    2. Your first utterance / turn MUST always be a short generic greeting (e.g. "Hello, how are you?", "Hi!", "hey! what's up?", etc.), and nothing else, wait for a reply before start with the actual conversation.
-   3. {conversation_end_instructions}."""  # noqa: E501
+   3. {conversation_end_instructions}."""
 
-        if type(model) is str:
-            # TODO: ChatHuggingFace
-            self.llm = ChatOllama(model=model,
-                                  temperature=0.8,
-                                  seed=13)
+        if isinstance(model, str):
+            if "/" in model:
+                print("Loading Hugging Face model:", model)
+                # Use Hugging Face model via ChatHuggingFace
+                pipe = transformers.pipeline(
+                    "text-generation",
+                    model=model,
+                    torch_dtype=torch.bfloat16,
+                    device_map="auto",
+                    max_new_tokens=2048,
+                    do_sample=True,
+                    repetition_penalty=1.03,
+                    return_full_text=False,
+                )
+                pipe.tokenizer.pad_token_id = pipe.model.config.eos_token_id
+                llm = HuggingFacePipeline(pipeline=pipe, model_kwargs={'temperature': 0.3})
+                self.llm = ChatHuggingFace(llm=llm)
+            else:
+                print("Loading ChatOllama model:", model)
+                # Use Langchain's Ollama wrapper
+                self.llm = ChatOllama(
+                    model=model,
+                    temperature=0.8,
+                    seed=13
+                )
         else:
+            # Assume model is already a usable instance
             self.llm = model
+
         self.memory = [SystemMessage(system_prompt)]
+
 
         self.name = name if name else (persona.name if hasattr(persona, "name") else None)
         self.persona = persona
@@ -233,6 +258,7 @@ Finally, remember:
 
                     persist = orchestrator.is_persistent()
                     self.instruct(instruction, persist=persist)
+                    #print(self.memory)
                     if return_events:
                         events.append(Event(agent=self.get_name(),
                                             action="instruct" + ("-persist" if persist else ""),
@@ -245,7 +271,12 @@ Finally, remember:
                         else self.first_utterances)
             response = AIMessage(content=response)
         else:
+            # Ensure last message is HumanMessage to avoid tokenizer error
+            if not isinstance(self.memory[-1], HumanMessage):
+                self.memory.append(HumanMessage(content=" "))
             response = self.llm.invoke(self.memory)
+            self.memory = [msg for msg in self.memory if not (isinstance(msg, HumanMessage) and msg.content == " ")]
+
 
         if self.orchestrators:
             self.memory[:] = [msg for msg in self.memory
@@ -255,6 +286,7 @@ Finally, remember:
         self.memory.append(response)
 
         response = response.content
+        #response = self.remove_system_prompt(response)
         if self.STOP_WORD in response:
             response = response.replace(self.STOP_WORD, self.STOP_WORD_TEXT).strip()
             self.memory[-1].content = self.memory[-1].content.replace(self.STOP_WORD, "").strip()
@@ -281,6 +313,11 @@ Finally, remember:
         """
         self.add_orchestrators(orchestrator)
         return self
+
+    # def remove_system_prompt(self,chatml_text):
+    #     # Remove the first <|im_start|>system ... <|im_end|> block
+    #     # This will only remove the first occurrence (the system prompt)
+    #     return re.sub(r"<\|im_start\|>system\n.*?<\|im_end\|>\n?", "", chatml_text, count=1, flags=re.DOTALL)
 
     def response_lookahead(self, utterance: str = None):
         """
@@ -342,16 +379,16 @@ Finally, remember:
         """
         self.first_utterances = utterances
 
-    def get_name(self, default: str = "Me") -> str:
+    def get_name(self):
         """
         Returns the agent's name.
 
         :return: The agent's name.
         :rtype: str
         """
-        return self.name if self.name is not None else default
+        return self.name
 
-    def get_prompt(self) -> str:
+    def get_prompt(self):
         """
         Returns the current system prompt.
 
@@ -373,7 +410,7 @@ Finally, remember:
         """
         data = {}
         if self.name:
-            data["name"] = self.get_name()
+            data["name"] = self.name
         data["model_name"] = self.model_name
         if self.first_utterances:
             data["first_utterances"] = self.first_utterances
@@ -397,15 +434,16 @@ Finally, remember:
             for orchestrator in self.orchestrators:
                 orchestrator.reset()
 
-        # hack to avoid seed bug in prompt cache
-        # (to force a new cache, related to https://github.com/ollama/ollama/issues/5321)
-        _ = self.llm.num_predict
-        self.llm.num_predict = 1
-        self.llm.invoke(self.memory)
-        self.llm.num_predict = _
+        if "/" not in self.llm.model_id:
+            # hack to avoid seed bug in prompt cache 
+            # (to force a new cache, related to https://github.com/ollama/ollama/issues/5321)
+            _ = self.llm.num_predict
+            self.llm.num_predict = 1
+            self.llm.invoke(self.memory)
+            self.llm.num_predict = _
 
     def dialog_with(self,
-                    agent: "PersonaAgent",
+                    persona: "PersonaAgent",
                     max_iterations: int = 20,
                     id: int = None,
                     seed: int = None,
@@ -413,8 +451,8 @@ Finally, remember:
         """
         Simulates a dialogue between this agent and another PersonaAgent.
 
-        :param agent: The other agent to converse with.
-        :type agent: PersonaAgent
+        :param persona: The other agent to converse with.
+        :type persona: PersonaAgent
         :param max_iterations: Maximum number of dialogue turns.
         :type max_iterations: int
         :param id: Dialogue ID.
@@ -430,7 +468,7 @@ Finally, remember:
 
         random.seed(seed)
         self.reset(seed)
-        agent.reset(seed)
+        persona.reset(seed)
 
         dialog = []
         events = []
@@ -451,12 +489,12 @@ Finally, remember:
                 break
 
             dialog.append(Turn(
-                speaker=self.get_name(),
+                speaker=self.get_name() if self.get_name() else "Me",
                 text=utt_events[-1].text
             ))
             events.extend(utt_events)
 
-            utt_events = agent(utter, return_events=True)
+            utt_events = persona(utter, return_events=True)
             if utt_events and utt_events[-1].action == "utter":
                 utter = utt_events[-1].text
                 utt_events[-1].text = utter.replace(self.STOP_WORD_TEXT, "").strip()
@@ -467,7 +505,7 @@ Finally, remember:
                 break
 
             dialog.append(Turn(
-                speaker=agent.get_name(default="Other"),
+                speaker=persona.get_name() if persona.get_name() else "Other",
                 text=utt_events[-1].text
             ))
             events.extend(utt_events)
@@ -484,7 +522,7 @@ Finally, remember:
             scenario = {
                 "agents": [
                     self.json(),
-                    agent.json()
+                    persona.json()
                 ]
             }
 
@@ -493,9 +531,6 @@ Finally, remember:
             complete=completion,  # incomplete if ran out of iterations (reached max_iteration number)
             model=self.model_name,
             seed=seed,
-            personas={
-                self.get_name(): self.persona.json(),
-                agent.get_name(default="Other"): agent.persona.json()},
             scenario=scenario,
             turns=dialog,
             events=events
