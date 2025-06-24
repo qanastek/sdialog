@@ -24,6 +24,18 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "sergioburdisso",
+      "name": "Sergio Burdisso",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12646542?v=4",
+      "profile": "http://scholar.google.com/citations?user=XOD8lrAAAAAJ",
+      "contributions": [
+        "code",
+        "ideas",
+        "doc",
+        "tutorial"
+      ]
     }
   ],
   "contributorsPerLine": 7,
