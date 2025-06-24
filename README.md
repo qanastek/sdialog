@@ -102,7 +102,7 @@ dialog.print()
 - **[API Reference](https://sdialog.readthedocs.io/en/latest/api/index.html):** See docstrings in the codebase for detailed documentation of all classes and functions.
 - **[Tutorials](https://github.com/idiap/sdialog/tree/main/tutorials):** Tutorials for hands-on examples as Jupyter Notebooks.
 
-## :muscle::sunglasses::+1: Contributors
+## :muscle: Contributors :sunglasses::+1:
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
