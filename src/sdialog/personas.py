@@ -128,7 +128,6 @@ class PersonaAgent:
 
     def __init__(self,
                  model: Union[str, ChatOllama],
-                 hf_model: bool = False,
                  persona: BasePersona = Persona(),
                  name: str = None,
                  dialogue_details: str = "",
@@ -258,7 +257,6 @@ Finally, remember:
 
                     persist = orchestrator.is_persistent()
                     self.instruct(instruction, persist=persist)
-                    #print(self.memory)
                     if return_events:
                         events.append(Event(agent=self.get_name(),
                                             action="instruct" + ("-persist" if persist else ""),
@@ -286,7 +284,6 @@ Finally, remember:
         self.memory.append(response)
 
         response = response.content
-        #response = self.remove_system_prompt(response)
         if self.STOP_WORD in response:
             response = response.replace(self.STOP_WORD, self.STOP_WORD_TEXT).strip()
             self.memory[-1].content = self.memory[-1].content.replace(self.STOP_WORD, "").strip()
@@ -313,11 +310,6 @@ Finally, remember:
         """
         self.add_orchestrators(orchestrator)
         return self
-
-    # def remove_system_prompt(self,chatml_text):
-    #     # Remove the first <|im_start|>system ... <|im_end|> block
-    #     # This will only remove the first occurrence (the system prompt)
-    #     return re.sub(r"<\|im_start\|>system\n.*?<\|im_end\|>\n?", "", chatml_text, count=1, flags=re.DOTALL)
 
     def response_lookahead(self, utterance: str = None):
         """
@@ -379,16 +371,16 @@ Finally, remember:
         """
         self.first_utterances = utterances
 
-    def get_name(self):
+    def get_name(self, default: str = "Me") -> str:
         """
         Returns the agent's name.
 
         :return: The agent's name.
         :rtype: str
         """
-        return self.name
+        return self.name if self.name is not None else default
 
-    def get_prompt(self):
+    def get_prompt(self) -> str:
         """
         Returns the current system prompt.
 
@@ -410,7 +402,7 @@ Finally, remember:
         """
         data = {}
         if self.name:
-            data["name"] = self.name
+            data["name"] = self.get_name()
         data["model_name"] = self.model_name
         if self.first_utterances:
             data["first_utterances"] = self.first_utterances
@@ -443,7 +435,7 @@ Finally, remember:
             self.llm.num_predict = _
 
     def dialog_with(self,
-                    persona: "PersonaAgent",
+                    agent: "PersonaAgent",
                     max_iterations: int = 20,
                     id: int = None,
                     seed: int = None,
@@ -451,8 +443,8 @@ Finally, remember:
         """
         Simulates a dialogue between this agent and another PersonaAgent.
 
-        :param persona: The other agent to converse with.
-        :type persona: PersonaAgent
+        :param agent: The other agent to converse with.
+        :type agent: PersonaAgent
         :param max_iterations: Maximum number of dialogue turns.
         :type max_iterations: int
         :param id: Dialogue ID.
@@ -468,7 +460,7 @@ Finally, remember:
 
         random.seed(seed)
         self.reset(seed)
-        persona.reset(seed)
+        agent.reset(seed)
 
         dialog = []
         events = []
@@ -494,7 +486,7 @@ Finally, remember:
             ))
             events.extend(utt_events)
 
-            utt_events = persona(utter, return_events=True)
+            utt_events = agent(utter, return_events=True)
             if utt_events and utt_events[-1].action == "utter":
                 utter = utt_events[-1].text
                 utt_events[-1].text = utter.replace(self.STOP_WORD_TEXT, "").strip()
@@ -505,7 +497,7 @@ Finally, remember:
                 break
 
             dialog.append(Turn(
-                speaker=persona.get_name() if persona.get_name() else "Other",
+                speaker=agent.get_name(default="Other"),
                 text=utt_events[-1].text
             ))
             events.extend(utt_events)
@@ -522,7 +514,7 @@ Finally, remember:
             scenario = {
                 "agents": [
                     self.json(),
-                    persona.json()
+                    agent.json()
                 ]
             }
 
@@ -531,6 +523,9 @@ Finally, remember:
             complete=completion,  # incomplete if ran out of iterations (reached max_iteration number)
             model=self.model_name,
             seed=seed,
+            personas={Add commentMore actions
+                self.get_name(): self.persona.json(),
+                agent.get_name(default="Other"): agent.persona.json()},
             scenario=scenario,
             turns=dialog,
             events=events
