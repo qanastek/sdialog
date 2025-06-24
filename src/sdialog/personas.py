@@ -14,7 +14,6 @@ import transformers
 from langchain_huggingface import ChatHuggingFace, HuggingFacePipeline
 from time import time
 from tqdm.auto import trange
-import re
 from typing import List, Union
 from langchain_ollama.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
@@ -212,7 +211,6 @@ Finally, remember:
             self.llm = model
 
         self.memory = [SystemMessage(system_prompt)]
-
 
         self.name = name if name else (persona.name if hasattr(persona, "name") else None)
         self.persona = persona
