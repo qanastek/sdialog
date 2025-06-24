@@ -29,7 +29,7 @@ from .util import make_serializable
 __version__ = "0.0.2"
 
 
-def get_dynamic_version() -> str:
+def _get_dynamic_version() -> str:
     """ Retrieves the current version of the package, appending the current git commit hash if available."""
     try:
         commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
@@ -98,7 +98,7 @@ class Dialog(BaseModel):
     :ivar events: List of dialogue events (optional).
     :vartype events: Optional[List[Event]]
     """
-    formatVersion: Optional[str] = Field(default_factory=get_dynamic_version)  # Version of the format
+    formatVersion: Optional[str] = Field(default_factory=_get_dynamic_version)  # Version of the format
     model: Optional[str] = None  # the model used to generate the dialogue
     seed: Optional[int] = None  # the seed used to generated
     dialogId: Optional[int] = None
