@@ -185,10 +185,11 @@ Finally, remember:
    3. {conversation_end_instructions}."""  # noqa: E501
 
         llm_kwargs = llm_kwargs or {}
-
+        self.hf_model = False
         if isinstance(model, str):
             if "/" in model:
                 print("Loading Hugging Face model:", model)
+                self.hf_model = True
                 # Default HuggingFace parameters
                 hf_defaults = dict(
                     model=model,
@@ -438,7 +439,7 @@ Finally, remember:
             for orchestrator in self.orchestrators:
                 orchestrator.reset()
 
-        if "/" not in self.llm.model_id:
+        if not self.hf_model:
             # hack to avoid seed bug in prompt cache
             # (to force a new cache, related to https://github.com/ollama/ollama/issues/5321)
             _ = self.llm.num_predict
