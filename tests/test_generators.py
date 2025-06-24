@@ -40,6 +40,16 @@ def test_persona_dialog_generator(monkeypatch):
     assert hasattr(dialog, "turns")
 
 
+def test_persona_dialog_generator_personas(monkeypatch):
+    monkeypatch.setattr("sdialog.generators.ChatOllama", DummyLLM)
+    persona_a = Persona(name="A")
+    persona_b = Persona(name="B")
+    gen = PersonaDialogGenerator(MODEL, persona_a, persona_b)
+    dialog = gen()
+    assert "A" in dialog.personas
+    assert "B" in dialog.personas
+
+
 def test_persona_dialog_generator_with_agents(monkeypatch):
     monkeypatch.setattr("sdialog.generators.ChatOllama", DummyLLM)
     persona_a = PersonaAgent(DummyLLM(), name="A")
@@ -47,3 +57,5 @@ def test_persona_dialog_generator_with_agents(monkeypatch):
     gen = PersonaDialogGenerator(MODEL, persona_a, persona_b)
     dialog = gen()
     assert hasattr(dialog, "turns")
+    assert "A" in dialog.personas
+    assert "B" in dialog.personas

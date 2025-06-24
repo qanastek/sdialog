@@ -76,6 +76,7 @@ class Dialog(BaseModel):
     :vartype dialogId: Optional[int]
     :ivar complete: Whether the dialogue is complete.
     :vartype complete: Optional[bool]
+    :ivar personas: Personas used in the dialogue, mapping speaker names to their attributes.
     :ivar scenario: Scenario description or metadata.
     :vartype scenario: Optional[Union[dict, str]]
     :ivar turns: List of dialogue turns.

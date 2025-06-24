@@ -12,7 +12,7 @@ import random
 
 from pydantic import BaseModel
 
-from typing import Union, List
+from typing import Union, List, Any
 from langchain_ollama.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 
@@ -50,7 +50,8 @@ class DialogGenerator:
                  model: Union[ChatOllama, str],
                  dialogue_details: str,
                  output_format: Union[dict, BaseModel] = LLMDialogOutput,
-                 scenario: dict = None):
+                 scenario: dict = None,
+                 personas: dict[str, dict[str, Any]] = None):
         """
         Initializes a DialogGenerator.
 
@@ -62,6 +63,8 @@ class DialogGenerator:
         :type output_format: Union[dict, BaseModel]
         :param scenario: Scenario metadata for the dialogue (if not provided, value set to `dialogue_details`).
         :type scenario: dict
+        :param personas: Optional personas for role-playing in the dialogue (if any).
+        :type personas: dict[str, dict[str, Any]]
         """
 
         if not output_format or type(output_format) is dict:
@@ -81,6 +84,7 @@ class DialogGenerator:
             if output_format:
                 self.llm.format = output_format
 
+        self.personas = personas
         self.model_name = model
         self.set(dialogue_details, scenario)
 
@@ -115,6 +119,7 @@ class DialogGenerator:
                 return Dialog(dialogId=id if id else None,
                               model=self.model_name,
                               seed=self.llm.seed,
+                              personas=self.personas,
                               scenario=self.scenario if self.scenario else self.dialogue_details,
                               turns=llm_output.dialog)
             else:
@@ -140,7 +145,7 @@ class DialogGenerator:
             HumanMessage(content=dialogue_details)
         ]
 
-    __call__ = generate
+    __call__ = generate  # alias for generate method
 
 
 class PersonaDialogGenerator(DialogGenerator):
@@ -183,6 +188,8 @@ class PersonaDialogGenerator(DialogGenerator):
         if isinstance(persona_a, PersonaAgent) and isinstance(persona_b, PersonaAgent):
             self._agent_a = persona_a
             self._agent_b = persona_b
+            persona_a = persona_a.persona
+            persona_b = persona_b.persona
 
         dialogue_details = f"""Role play as the following two characters having a conversations. The characters are defined by the personas in the following lines. You always stay in character.
 [[ ## BEGING FIRST PERSONA ## ]]
@@ -200,9 +207,15 @@ Finally, remember:
    2. Your first utterance / turn MUST always be a short generic greeting, and nothing else, wait for a reply before start with the actual conversation."""  # noqa: E501
         super().__init__(model=model,
                          dialogue_details=dialogue_details,
-                         scenario=scenario)
+                         scenario=scenario,
+                         personas={
+                             persona_a.name: persona_a.json(),
+                             persona_b.name: persona_b.json()
+                         })
 
     def generate(self, seed: int = None, id: int = None, max_iterations: int = 20):
+        with open("BORRAR.txt", "w") as writer:
+            writer.write("GENERATE!")
         if self._agent_a and self._agent_b:
             return self._agent_a.dialog_with(self._agent_b,
                                              max_iterations=max_iterations,
@@ -210,3 +223,5 @@ Finally, remember:
                                              seed=seed)
         else:
             return super().generate(seed=seed, id=id)
+
+    __call__ = generate  # alias for generate method
