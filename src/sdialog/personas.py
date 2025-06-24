@@ -6,14 +6,15 @@ these personas in synthetic dialogue generation. Agents interact using LLMs and 
 complex behaviors.
 """
 # SPDX-FileCopyrightText: Copyright © 2025 Idiap Research Institute <contact@idiap.ch>
-# SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>
+# SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>, Séverin Baroudi <severin.baroudi@lis-lab.fr>
 # SPDX-License-Identifier: MIT
 import json
 import random
-
+import torch
+import transformers
+from langchain_huggingface import ChatHuggingFace, HuggingFacePipeline
 from time import time
 from tqdm.auto import trange
-
 from typing import List, Union
 from langchain_ollama.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
@@ -135,7 +136,9 @@ class PersonaAgent:
                  system_prompt: str = None,
                  can_finish: bool = False,
                  orchestrators: Union[BaseOrchestrator, List[BaseOrchestrator]] = None,
-                 scenario: Union[dict, str] = None):
+                 scenario: Union[dict, str] = None,
+                 llm_kwargs: dict = None):
+
         """
         Initializes a PersonaAgent for role-play dialogue.
 
@@ -181,13 +184,46 @@ Finally, remember:
    2. Your first utterance / turn MUST always be a short generic greeting (e.g. "Hello, how are you?", "Hi!", "hey! what's up?", etc.), and nothing else, wait for a reply before start with the actual conversation.
    3. {conversation_end_instructions}."""  # noqa: E501
 
-        if type(model) is str:
-            # TODO: ChatHuggingFace
-            self.llm = ChatOllama(model=model,
-                                  temperature=0.8,
-                                  seed=13)
+        llm_kwargs = llm_kwargs or {}
+        self.hf_model = False
+        if isinstance(model, str):
+            if "/" in model:
+                print("Loading Hugging Face model:", model)
+                self.hf_model = True
+                # Default HuggingFace parameters
+                hf_defaults = dict(
+                    model=model,
+                    torch_dtype=torch.bfloat16,
+                    device_map="auto",
+                    max_new_tokens=2048,
+                    do_sample=True,
+                    repetition_penalty=1.03,
+                    return_full_text=False,
+                )
+                hf_params = {**hf_defaults, **llm_kwargs}
+
+                pipe = transformers.pipeline("text-generation", **hf_params)
+                pipe.tokenizer.pad_token_id = pipe.model.config.eos_token_id
+
+                self.llm = ChatHuggingFace(
+                    llm=HuggingFacePipeline(pipeline=pipe,
+                                            model_kwargs={'temperature': hf_params.get("temperature", 0.3)})
+                )
+
+            else:
+                print("Loading ChatOllama model:", model)
+                # Default Ollama params
+                ollama_defaults = dict(
+                    model=model,
+                    temperature=0.8,
+                    seed=13
+                )
+                ollama_params = {**ollama_defaults, **llm_kwargs}
+                self.llm = ChatOllama(**ollama_params)
         else:
+            # Assume model is already an instance
             self.llm = model
+
         self.memory = [SystemMessage(system_prompt)]
 
         self.name = name if name else (persona.name if hasattr(persona, "name") else None)
@@ -241,11 +277,17 @@ Finally, remember:
                                             timestamp=int(time())))
 
         if len(self.memory) <= 1 and self.first_utterances:
-            response = (random.choice(self.first_utterances) if type(self.first_utterances) is list
+            response = (random.choice(self.first_utterances)
+                        if type(self.first_utterances) is list
                         else self.first_utterances)
             response = AIMessage(content=response)
         else:
+            # Ensure last message is HumanMessage to avoid tokenizer error
+            if not isinstance(self.memory[-1], HumanMessage):
+                self.memory.append(HumanMessage(content=" "))
             response = self.llm.invoke(self.memory)
+            self.memory = [msg for msg in self.memory
+                           if not (isinstance(msg, HumanMessage) and msg.content == " ")]
 
         if self.orchestrators:
             self.memory[:] = [msg for msg in self.memory
@@ -397,12 +439,13 @@ Finally, remember:
             for orchestrator in self.orchestrators:
                 orchestrator.reset()
 
-        # hack to avoid seed bug in prompt cache
-        # (to force a new cache, related to https://github.com/ollama/ollama/issues/5321)
-        _ = self.llm.num_predict
-        self.llm.num_predict = 1
-        self.llm.invoke(self.memory)
-        self.llm.num_predict = _
+        if not self.hf_model:
+            # hack to avoid seed bug in prompt cache
+            # (to force a new cache, related to https://github.com/ollama/ollama/issues/5321)
+            _ = self.llm.num_predict
+            self.llm.num_predict = 1
+            self.llm.invoke(self.memory)
+            self.llm.num_predict = _
 
     def dialog_with(self,
                     agent: "PersonaAgent",
