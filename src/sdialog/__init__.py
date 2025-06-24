@@ -16,15 +16,29 @@ Main components:
 # SPDX-FileContributor: Sergio Burdisso <sergio.burdisso@idiap.ch>
 # SPDX-License-Identifier: MIT
 import os
+import re
 import json
+import subprocess
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Union, Optional, Any
 from print_color import print
 
 from .util import make_serializable
 
 __version__ = "0.0.2"
+
+
+def _get_dynamic_version() -> str:
+    """ Retrieves the current version of the package, appending the current git commit hash if available."""
+    try:
+        commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
+        # If not a valid commit hash, set to empty string
+        if re.match(r"\b[0-9a-f]{5,40}\b", commit_hash):
+            return f"{__version__}+{commit_hash}"
+    except Exception:
+        pass
+    return __version__
 
 
 class Turn(BaseModel):
@@ -66,7 +80,7 @@ class Dialog(BaseModel):
     """
     Represents a full dialogue, including turns, events, and scenario metadata.
 
-    :ivar formatVersion: Version of the dialogue format.
+    :ivar formatVersion: Version of the dialogue format (sdialog version).
     :vartype formatVersion: Optional[str]
     :ivar model: The model used to generate the dialogue.
     :vartype model: Optional[str]
@@ -84,7 +98,7 @@ class Dialog(BaseModel):
     :ivar events: List of dialogue events (optional).
     :vartype events: Optional[List[Event]]
     """
-    formatVersion: Optional[str] = __version__  # Version of the format
+    formatVersion: Optional[str] = Field(default_factory=_get_dynamic_version)  # Version of the format
     model: Optional[str] = None  # the model used to generate the dialogue
     seed: Optional[int] = None  # the seed used to generated
     dialogId: Optional[int] = None

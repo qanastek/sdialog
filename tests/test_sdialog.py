@@ -1,4 +1,4 @@
-from sdialog import Dialog, Turn, Event, Instruction, __version__
+from sdialog import Dialog, Turn, Event, Instruction, _get_dynamic_version
 
 
 def test_turn_and_event():
@@ -17,7 +17,7 @@ def test_dialog_serialization_and_str():
     turns = [Turn(speaker="A", text="Hi"), Turn(speaker="B", text="Hello")]
     dialog = Dialog(turns=turns)
     json_obj = dialog.json()
-    assert dialog.formatVersion == __version__
+    assert dialog.formatVersion == _get_dynamic_version()
     assert isinstance(json_obj, dict)
     assert "turns" in json_obj
     assert dialog.description().startswith("A: Hi")

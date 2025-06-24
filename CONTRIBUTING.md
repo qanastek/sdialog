@@ -36,7 +36,7 @@ python -m twine upload dist/*
 Make sure your changes passes the style and unit tests, run the following commands in the root directory:
 
 ```bash
-flake8 --ignore=E501,W503
+flake8 --ignore=W503
 pytest
 ```
 

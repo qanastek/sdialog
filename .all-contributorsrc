@@ -1,0 +1,50 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "qanastek",
+      "name": "Labrak Yanis",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19389475?v=4",
+      "profile": "http://linkedin.com/in/yanis-labrak-8a7412145/",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "SevKod",
+      "name": "Séverin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/123748182?v=4",
+      "profile": "https://github.com/SevKod",
+      "contributions": [
+        "code",
+        "ideas",
+        "tutorial"
+      ]
+    },
+    {
+      "login": "sergioburdisso",
+      "name": "Sergio Burdisso",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12646542?v=4",
+      "profile": "http://scholar.google.com/citations?user=XOD8lrAAAAAJ",
+      "contributions": [
+        "code",
+        "ideas",
+        "doc",
+        "tutorial"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "sdialog",
+  "projectOwner": "idiap",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true,
+  "commitType": "docs",
+  "commitConvention": "angular"
+}
