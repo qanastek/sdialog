@@ -12,11 +12,13 @@ import json
 import random
 import torch
 import transformers
-from langchain_huggingface import ChatHuggingFace, HuggingFacePipeline
+
 from time import time
 from tqdm.auto import trange
 from typing import List, Union
+
 from langchain_ollama.chat_models import ChatOllama
+from langchain_huggingface import ChatHuggingFace, HuggingFacePipeline
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
 from . import Dialog, Turn, Event, Instruction
@@ -160,6 +162,8 @@ class PersonaAgent:
         :type orchestrators: Union[BaseOrchestrator, List[BaseOrchestrator]]
         :param scenario: Scenario metadata.
         :type scenario: Union[dict, str]
+        :param llm_kwargs: Additional parameters for the LLM.
+        :type llm_kwargs: dict
         """
 
         if not system_prompt:
@@ -187,9 +191,12 @@ Finally, remember:
         llm_kwargs = llm_kwargs or {}
         self.hf_model = False
         if isinstance(model, str):
+            # If model name has a slash, assume it's a Hugging Face model
+            # Otherwise, assume it's an Ollama model
             if "/" in model:
                 print("Loading Hugging Face model:", model)
                 self.hf_model = True
+
                 # Default HuggingFace parameters
                 hf_defaults = dict(
                     model=model,
@@ -204,12 +211,12 @@ Finally, remember:
 
                 pipe = transformers.pipeline("text-generation", **hf_params)
                 pipe.tokenizer.pad_token_id = pipe.model.config.eos_token_id
+                # TODO: if tokenizer doesn't have a chat template, set a default one
 
                 self.llm = ChatHuggingFace(
                     llm=HuggingFacePipeline(pipeline=pipe,
                                             model_kwargs={'temperature': hf_params.get("temperature", 0.3)})
                 )
-
             else:
                 print("Loading ChatOllama model:", model)
                 # Default Ollama params
@@ -282,12 +289,13 @@ Finally, remember:
                         else self.first_utterances)
             response = AIMessage(content=response)
         else:
-            # Ensure last message is HumanMessage to avoid tokenizer error
-            if not isinstance(self.memory[-1], HumanMessage):
-                self.memory.append(HumanMessage(content=" "))
-            response = self.llm.invoke(self.memory)
-            self.memory = [msg for msg in self.memory
-                           if not (isinstance(msg, HumanMessage) and msg.content == " ")]
+            if self.hf_model and not isinstance(self.memory[-1], HumanMessage):
+                # Ensure last message is HumanMessage to avoid "Last message must be a HumanMessage!"
+                # from langchain_huggingface (which makes no sense, for ollama is OK but for hugging face is not?)
+                # https://github.com/langchain-ai/langchain/blob/6d71b6b6ee7433716a59e73c8e859737800a0a86/libs/partners/huggingface/langchain_huggingface/chat_models/huggingface.py#L726
+                response = self.llm.invoke(self.memory + [HumanMessage(content="")])
+            else:
+                response = self.llm.invoke(self.memory)
 
         if self.orchestrators:
             self.memory[:] = [msg for msg in self.memory
