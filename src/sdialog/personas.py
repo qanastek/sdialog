@@ -481,7 +481,7 @@ Finally, remember:
                 break
 
             dialog.append(Turn(
-                speaker=self.get_name() if self.get_name() else "Me",
+                speaker=self.get_name(),
                 text=utt_events[-1].text
             ))
             events.extend(utt_events)
@@ -523,7 +523,7 @@ Finally, remember:
             complete=completion,  # incomplete if ran out of iterations (reached max_iteration number)
             model=self.model_name,
             seed=seed,
-            personas={Add commentMore actions
+            personas={
                 self.get_name(): self.persona.json(),
                 agent.get_name(default="Other"): agent.persona.json()},
             scenario=scenario,
