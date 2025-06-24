@@ -26,6 +26,7 @@ from print_color import print
 
 from .util import make_serializable
 
+
 __version__ = "0.0.2"
 
 
@@ -225,6 +226,25 @@ class Dialog(BaseModel):
         :rtype: Dialog
         """
         return Dialog.from_dict(json.loads(json_str))
+
+    def to_audio(self, path=None):
+        """ Converts the dialogue to audio format.
+
+        :param path: If provided, saves the audio to this file path.
+        :type path: Optional[str]
+        :return: The audio data as a numpy array.
+        :rtype: np.ndarray
+        """
+        from .audio import dialog_to_audio, to_wav
+
+        audio = dialog_to_audio(self)
+
+        if path:
+            if not path.endswith(".wav"):
+                path += ".wav"
+            to_wav(audio, path)
+
+        return audio
 
     __str__ = description
 
