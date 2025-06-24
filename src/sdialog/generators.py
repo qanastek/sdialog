@@ -214,8 +214,6 @@ Finally, remember:
                          })
 
     def generate(self, seed: int = None, id: int = None, max_iterations: int = 20):
-        with open("BORRAR.txt", "w") as writer:
-            writer.write("GENERATE!")
         if self._agent_a and self._agent_b:
             return self._agent_a.dialog_with(self._agent_b,
                                              max_iterations=max_iterations,
