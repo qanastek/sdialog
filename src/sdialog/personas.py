@@ -136,7 +136,7 @@ class PersonaAgent:
                  response_details: str = "responses SHOULD NOT be too long and wordy, should be "
                                          "approximately one utterance long",
                  system_prompt: str = None,
-                 can_finish: bool = False,
+                 can_finish: bool = True,
                  orchestrators: Union[BaseOrchestrator, List[BaseOrchestrator]] = None,
                  scenario: Union[dict, str] = None,
                  llm_kwargs: dict = None):
