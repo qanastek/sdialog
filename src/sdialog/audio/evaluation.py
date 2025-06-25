@@ -47,11 +47,11 @@ def speaker_consistency(utterances_audios: List[Tuple[np.ndarray, str]]) -> floa
 
         _distances = []
 
-        for i in range(len(xvectors[speaker])-1):
+        for i in range(len(xvectors[speaker]) - 1):
 
             # Get the embeddings for two consecutive utterances of the same speaker
             embedding1 = xvectors[speaker][i]
-            embedding2 = xvectors[speaker][i+1]
+            embedding2 = xvectors[speaker][i + 1]
 
             # Compute the cosine similarity between two utterance embeddings of the same speaker
             distance = cdist(embedding1, embedding2, metric="cosine")[0, 0]
