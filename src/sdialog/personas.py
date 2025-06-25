@@ -230,6 +230,7 @@ Finally, remember:
         else:
             # Assume model is already an instance
             self.llm = model
+            self.hf_model = isinstance(model, ChatHuggingFace)
 
         self.memory = [SystemMessage(system_prompt)]
 
