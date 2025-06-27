@@ -11,13 +11,13 @@ print("Modèle chargé.")
 data = [
     {
         "text": ("Thank you for sharing that. So have you experienced any other symptoms along"
-        " with the chest pain? Such as shortness of breath, sweating, nausea, or dizziness?"),
+                 " with the chest pain? Such as shortness of breath, sweating, nausea, or dizziness?"),
         "role": "doctor",
         "voice": "doctor_en_reference_converted.wav"
     },
     {
         "text": ("Yes, I feel short of breath, and I'm sweating a lot. I also feel a bit"
-        " nauseated, but I haven't vomited."),
+                 " nauseated, but I haven't vomited."),
         "role": "patient",
         "voice": "patient_en_reference_converted.wav"
     },

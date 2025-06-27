@@ -10,7 +10,7 @@ data = [
     },
     {
         "text": ("Yes, I feel short of breath, and I'm sweating a lot. "
-        "I also feel a bit nauseated, but I haven't vomited."),
+                 "I also feel a bit nauseated, but I haven't vomited."),
         "voice": "af_heart",
         "role": "patient"
     },
